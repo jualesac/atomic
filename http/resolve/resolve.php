@@ -3,9 +3,9 @@
  * FECHA: 2020/03/09
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
- * TÍTULO: response.php
+ * TÍTULO: resolve.php
  *
- * Descripción: Clase para las respuestas HTTP
+ * Descripción: Objeto para la resolución de petición
 */
 
 namespace http;
