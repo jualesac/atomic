@@ -3,9 +3,9 @@
  * FECHA: 2020/03/09
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
- * TÍTULO: response.php
+ * TÍTULO: stream.php
  *
- * Descripción: Clase para las respuestas HTTP
+ * Descripción: Envoltura de peticiones
 */
 
 namespace http;
