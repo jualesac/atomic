@@ -2,7 +2,7 @@
 /*
  * FECHA: 2020/03/17
  * AUTOR: Julio Alejandro Santos Corona
- * CORREO: jualesac@yahoo.com
+ * CORREO: jasantos@santander.com.mx | jualesac@yahoo.com
  * TÍTULO: core.php
  *
  * Descripción: Núcleo de framework
@@ -37,7 +37,7 @@ final class CORE extends CONFIG
     }
     //Se carga la app localizada
     final public function load () {
-        $controllers;
+        $controller;
 
         if (!$this->app) { throw new HTTPException (404, "Aplicación desconocida"); }
         //Se carga el controlador de app
