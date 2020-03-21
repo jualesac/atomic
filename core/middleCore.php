@@ -2,7 +2,7 @@
 /*
  * FECHA: 2020/03/17
  * AUTOR: Julio Alejandro Santos Corona
- * CORREO: jualesac@yahoo.com
+ * CORREO: jasantos@santander.com.mx | jualesac@yahoo.com
  * TÍTULO: middleCore.php
  *
  * Descripción: Interface para el módulo de configuración de middles.php
@@ -10,11 +10,14 @@
 
 namespace core;
 
-abstract class middleCore
+abstract class middleCore extends initCore
 {
+    protected static $p;
     private $middlewares = [];
 
     function __construct () {
+        parent::__construct ();
+        
         $this->middlewares ();
     }
 

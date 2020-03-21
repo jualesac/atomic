@@ -2,7 +2,7 @@
 /*
  * FECHA: 2020/03/17
  * AUTOR: Julio Alejandro Santos Corona
- * CORREO: jualesac@yahoo.com
+ * CORREO: jasantos@santander.com.mx | jualesac@yahoo.com
  * TÍTULO: stdCore.php
  *
  * Descripción: Núcleo estandard para la extensión ejecución de controladores
@@ -10,27 +10,24 @@
 
 namespace core;
 
-require (__DIR__."/../middleware/middleware.php");
+require ("initCore.php");
 require (__DIR__."/../db/db.php");
 require (__DIR__."/../file/file.php");
 require (__DIR__."/../scheme/scheme.php");
+require (__DIR__."/../middleware/middleware.php");
 
 use http\HTTPRoute;
-use db\DB;
-use file\FILE;
 
-abstract class stdCore
+abstract class stdCore extends initCore
 {
     protected $middlewares;
     protected $route;
-    protected $db;
-    protected $file;
 
     function __construct () {
+        parent::__construct ();
+
         $this->middlewares = new MIDDLEWARE;
         $this->route = new HTTPRoute;
-        $this->db = new DB;
-        $this->file = new FILE;
 
         $this->middleware (); //Se cargan los middleware generales
         $this->routes (); //Se cargan las rutas de la app
