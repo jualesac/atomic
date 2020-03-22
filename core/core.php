@@ -2,7 +2,7 @@
 /*
  * FECHA: 2020/03/17
  * AUTOR: Julio Alejandro Santos Corona
- * CORREO: jasantos@santander.com.mx | jualesac@yahoo.com
+ * CORREO: jualesac@yahoo.com
  * TÍTULO: core.php
  *
  * Descripción: Núcleo de framework

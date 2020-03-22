@@ -3,22 +3,24 @@
  * FECHA: 2020/03/20
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
- * TÍTULO: initCore.php
+ * TÍTULO: dbCore.php
  *
- * Descripción: Clase iniciadora de cores
+ * Descripción: Permite iniciar una única instancia hacia la base de datos
 */
 
 namespace core;
 
-use db\DB;
-use file\FILE;
+require (__DIR__."/../db/db.php");
 
-abstract class initCore
+use db\DB;
+
+abstract class dbCore
 {
     protected static $db;
 
     function __construct () {
         if (!$this::$db) {
+
             $this::$db = new DB;
         }
     }
