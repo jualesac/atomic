@@ -22,6 +22,8 @@ class HTTP
     //Parámetros
     private $request;
     private $url_default;
+    private $req;
+    private $res;
     private $routes; //Utilizada por HTTPRoute
 
     public $method;
@@ -116,7 +118,7 @@ class HTTP
         }
         //Ejecuciones
         try {
-            $res = new RESOLVE ($this->url_default, $this->headers, $this->utf8);
+            $this->res = $res = $this->res ?? new RESOLVE ($this->url_default, $this->headers, $this->utf8);
             $req = new REQUEST ($url);
             //Verificar si existe un punto de entrada HTTPRoute
             if (isset ($this->routes) && get_class ($this->routes) === "http\ROUTE") {
@@ -138,7 +140,7 @@ class HTTP
     //Ejecución de Middlewares
     final private function middlewares (array $middlewares) {
         $middle;
-        $res = new RESOLVE ($this->url_default, $this->headers, $this->utf8);
+        $this->res = $res = $this->res ?? new RESOLVE ($this->url_default, $this->headers, $this->utf8);
         $req;
 
         foreach ($middlewares as $middle) {
