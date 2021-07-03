@@ -1,75 +1,66 @@
 <?php
 /*
- * FECHA: 2020/03/17
+ * FECHA: 2021/06/25
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: core.php
- *
- * Descripción: Núcleo de framework
+ * 
+ * Descripción: Núcleo de ejecución
 */
 
-namespace core;
+namespace atomic;
 
-require (__DIR__."/../config/config.php");
-require (__DIR__."/../config/routes.php");
+require (__DIR__."/../config/core.php");
+require (__DIR__."/../config/apps.php");
 require (__DIR__."/../http/http.php");
-require (__DIR__."/../http/routes/httpRoute.php");
 
-use http\HTTPException;
-use http\REQUEST;
-use http\HTTP;
+use http\{ HTTPException, HTTPRoute, request\REQUEST, HTTP };
 use Exception;
 
 final class CORE extends CONFIG
 {
-    use ROUTES;
+    use APPS;
 
-    private const _path = __DIR__."/../controllers";
-    private $http;
-    private $app;
+    private HTTP $__http;
 
-    function __construct () {
-        $this->http = new HTTP;
-        $this->http->utf8 = $this::UTF8;
-        $this->http->headers = $this->headers;
-
-        $this->getApp (); //Se obtiene la app a cargar
+    public function __construct () {
+        $this->__http = new HTTP;
+        $this->__http->utf8 = $this::UTF8;
+        $this->__http->header = $this->headers;
     }
-    //Se carga la app localizada
-    final public function load () {
+
+    final public function load () : void {
         $controller;
 
-        if (!$this->app) { throw new HTTPException (404, "Aplicación desconocida"); }
-        //Se carga el controlador de app
-        require ($this::_path.REQUEST::castUrl($this->app["path"] ?? $this->app[1]));
+        foreach ($this->__packages as $pkg) {
+            $uri = $pkg[0] ?? $pkg["uri"];
+            $strict = $pkg[2] ?? ($pkg["strict"] ?? false);
 
-        if (class_exists ("core\controller")) {
-            $controller = new controller;
-
-            //Obtención de ruteo
-            $this->http->use (($this->app["uri"] ?? $this->app[0]), $controller->getRoutes ());
-
-            //Si no hay respuesta
-            throw new HTTPException (404, "URL no localizada");
-        } else {
-            throw new HTTPException (500, "No se pudo localizar el controlador de \"".($this->app["uri"] ?? $this->app[0])."\"");
-        }
-    }
-    //Obtención de aplicación
-    final private function getApp () {
-        $app;
-        $path;
-
-        foreach ($this->_PATHS as $app) {
-            $path = $app["uri"] ?? $app[0];
-
-            if ($this->http->checkRequest ($path, false)) {
-                $this->app = $app; //Se obtiene la app a cargar
-
-                return;
+            if (!$this->__http->checkRequest($uri, $strict)) {
+                continue;
             }
 
-            $path = null;
+            require ($this::CTRL_PATH.REQUEST::castUrl($pkg[1] ?? $pkg["path"]));
+
+            if (!class_exists("atomic\CONTROLLER")) {
+                throw new HTTPException (500, "Unknown Controller");
+            }
+
+            $controller = new CONTROLLER;
+
+            $this->__http->use (($pkg[0] ?? $pkg["uri"]), $controller->getRoutes());
+
+            throw new HTTPException (404, "Not Found");
         }
+
+        $this->state404 ();
+        //throw new HTTPException (404, "Unknown Application");
+    }
+
+    final private function state404 () : void {
+        header ("HTTP/1.1 404");
+        header ("Content-Type: text/html; charset=UTF-8;");
+
+        exit (file_get_contents (__DIR__."/../controllers/404.html"));
     }
 }

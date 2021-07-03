@@ -1,31 +1,54 @@
 <?php
 /*
- * FECHA: 2020/03/17
+ * FECHA: 2021/06/25
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: controller.php
- *
- * Descripción: Controlador de prueba
+ * 
+ * Descripción: Controlador
 */
 
-namespace core;
+namespace atomic;
 
 require (__DIR__."/../core/stdCore.php");
 
-final class CONTROLLER extends stdCore
+final class CONTROLLER extends STDCore
 {
-    function __construct () {
-        //Se debe ejecutar el constructor padre
+    public function __construct () {
         parent::__construct ();
     }
 
-    final protected function routes () : void {
-        $this->route->get ("PRUEBA", function ($res, $req) {
-            $res->response (200, $res->request->post ("PRUEBA"));
+    final protected function setRoutes () : void {
+        $this->route->get ("/", function ($res, $req) {
+            $res->response (200, $req);
         });
 
-        $this->route->post ("PRUEBA", function ($res, $req) {
-            $res->response (201, ["header" => $req->header]);
+        $this->route->get ("/SALUDO", function ($res, $req) {
+
+            $html = <<<HTML
+                <html>
+                    <head>
+                    </head>
+
+                    <body>
+                        <h1>Hola {$req->get->nombre}</h1>
+                    </body>
+                </html>
+HTML;
+            $res->setHeader ("Content-Type: text/html; charset = utf-8;");
+            $res->send (201, $html);
+        });
+
+        $this->route->post ("/", function ($res, $req) {
+            $res->response (200, $req);
+        });
+
+        $this->route->put ("/", function ($res, $req) {
+            $res->response (200, $req);
+        });
+
+        $this->route->delete ("/", function ($res, $req) {
+            $res->response (200, $req);
         });
     }
 }

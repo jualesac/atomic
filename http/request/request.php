@@ -1,88 +1,82 @@
 <?php
 /*
- * FECHA: 2020/03/09
+ * FECHA: 2021/06/08
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: request.php
- *
+ * 
  * Descripción: Clase para obtener valores de una petición HTTP
 */
 
-namespace http;
+namespace http\request;
 
 require ("file.php");
 
-class REQUEST extends FILE
+final class REQUEST extends FILE
 {
-    private const GET_PATTERN = "`((\?|&)[a-z0-9%+_\-.]+=[a-z0-9%+_\-.]+)|(\?|&)`i";
-    private const VAL_PATTERN = "`([a-z0-9%+_\-.]+)=([a-z0-9%+_\-.]+)`i";
-    private const PARAMS_PATTERN = "`/:([a-z0-9_]+)`i";
+    private const _GET = "`((\?|&)[a-z0-9%+_\-.]+=[a-z0-9%+_\-.]+)|(\?|&)`i";
+    private const _VAL = "`([a-z0-9%+_\-.]+)=([a-z0-9%+_\-.]+)`i";
+    private const _PARAMS = "`/:([a-z0-9_]+)`i";
+    
+    public array $header;
+    public object $get;
+    public object $param;
+    public object $body;
+    public object $file;
 
-    private $url;
-
-    public $header;
-    public $get;
-    public $param;
-    public $body;
-    public $file;
-    //La URL en este caso es una ruta personalizada que se comparará con la petición real
-    function __construct (string $url) {
+    final public function __construct () {
         parent::__construct ();
 
-        $this->url = $this->castUrl ($url);
-
         $this->header = apache_request_headers ();
-        $this->get = $this->getValuesUrl ();
-        $this->param = $this->getParams ();
+        $this->get = $this->getURLValues ();
         $this->body = $this->getBody ();
     }
-    /*********** ESTÁTICAS ***********/
-    //Homologa la estructura de un URL
+
     final public static function castUrl (string $url) : string {
-        return trim (preg_replace (["`^//`", "`^/{0,1}`", "`/$`", "`/\?`", "`^/\+`"], ["/+", "/", "", "?", "//"], trim ($url)));
+        return trim (preg_replace(["`^//`", "`^/{0,1}`", "`/$`", "`/\?`", "`^/\+`"], ["/+", "/", "", "?", "//"], trim($url)));
     }
 
-    //Remueve las variables enviadas por GET
-    final public static function rmGets (string $url) : string {
-        return preg_replace (self::GET_PATTERN, "", $url);
+    final public static function removeGets (string $url) : string {
+        return preg_replace (self::_GET, "", $url);
     }
 
-    //Retorna una url con parámetros como una expresión regular
-    final public static function getRegexUrl (string $url, bool $strict = true) : string {
-        return "`^".preg_replace (["`\.`", self::PARAMS_PATTERN, "`/$`"], ["\.", "/([a-z0-9%_]+)", ""], self::rmGets ($url)).($strict ? "$`i" : "`i");
+    final public static function castRegexUrl (string $url, bool $strict = true) : string {
+        return ("`^".preg_replace(["`\.`", self::_PARAMS, "`/$`"], ["\.", "/([a-z0-9%_]+)", ""], self::removeGets($url)).($strict ? "$`i" : "`i"));
     }
-    /*********************************/
 
-    //Regresa un objeto con los valores enviados con formato url
-    final private function getValuesUrl (string $input = null) : object {
+    final public function setParams (string $uri) : void {
+        $uri = $this->castUrl ($uri);
+
+        $this->param = $this->getParams ($uri);
+    }
+
+    final private function getURLValues (string $input = null) : object {
         $values = [];
 
-        preg_match_all ($this::VAL_PATTERN, ($input ?? $_SERVER["REQUEST_URI"]), $values);
+        preg_match_all ($this::_VAL, ($input ?? $_SERVER["REQUEST_URI"]), $values);
 
-        return (object) array_map (function ($val) {
-            return trim(urldecode ($val));
-        }, array_combine ($values[1], $values[2]));
+        return (object) array_map (function ($v) {
+            return trim (urldecode($v));
+        }, array_combine($values[1], $values[2]));
     }
 
-    //Retorna un objeto con los parámetros pasados por url
-    final private function getParams () : object {
+    final private function getParams (string $uri) : object {
         $keys = [];
         $vals = [];
-        //Nombre de parámetro
-        preg_match_all ($this::PARAMS_PATTERN, $this->url, $keys);
-        //Valor de parámetro
-        preg_match_all ($this->getRegexUrl ($this->rmGets ($this->url)), $this->castUrl ($this->rmGets ($_SERVER["REQUEST_URI"])), $vals);
+
+        preg_match_all ($this::_PARAMS, $uri, $keys);
+        preg_match_all ($this::castRegexUrl($this->removeGets($uri)), $this->castUrl($this->removeGets($_SERVER["REQUEST_URI"])), $vals);
         array_shift ($vals);
 
-        return (object) array_combine ($keys[1], array_map (function ($v) {
-            return urldecode ($v[0]);
+        return (object) array_combine ($keys[1], array_map(function ($v) {
+            return trim (urldecode($v[0]));
         }, $vals));
     }
 
-    //Retorna un objeto con valores pasados por body
     final private function getBody () : object {
-        return ((file_get_contents ("php://input", false, null, 0, 5) === "") || ($_SERVER["REQUEST_METHOD"] === "GET"))
-            ? (object) $_POST
-            : $this->getValuesUrl (file_get_contents ("php://input"));
+        return (
+            (file_get_contents("php://input", false, null, 0, 5) === "")
+            || ($_SERVER["REQUEST_METHOD"] === "GET")
+        )     ? (object) $_POST : $this->getURLValues (file_get_contents("php://input"));
     }
 }

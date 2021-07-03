@@ -1,34 +1,33 @@
 <?php
 /*
- * FECHA: 2020/03/17
+ * FECHA: 2021/06/24
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: index.php
- *
- * Descripción: Ejecución de API
+ * 
+ * Descripción: Ejecución de API.
 */
 
 namespace atomic;
 
 require ("core/core.php");
 
-use core\CORE;
-use http\RESOLVE;
-use http\HTTPException;
+use http\{ HTTPException, resolve\RESOLVE };
 use Exception;
 
 final class ATOMIC
 {
-    final public static function main () {
+    final public static function main () : void {
         try {
             $core = new CORE;
-            //Carga de núcleo de APP
+
             $core->load ();
 
         } catch (HTTPException $e) {
-            RESOLVE::splResponse ($e->getState (), true);
+            RESOLVE::jsonResponse ($e->getException ()[0], $e->getException()[2] ?? [ "message" => $e->getException()[1] ], true);
         } catch (Exception $e) {
-            RESOLVE::splResponse (HTTPException::parse ($e->getMessage ()), true);
+            $except = HTTPException::parse ($e->getMessage());
+            RESOLVE::jsonResponse ($except[0], [ "message" => $except[1] ], true);
         }
     }
 }

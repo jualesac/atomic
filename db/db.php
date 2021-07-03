@@ -1,93 +1,86 @@
 <?php
 /*
- * FECHA: 2018/12/26
+ * FECHA: 2021/06/28
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: db.php
  *
  * Descripción: Contiene todos los métodos que interactúan con la base de datos.
- *
- * Actualización: 2019/07/24 - Adaptación para funcionar con la clase HTTP.
 */
 
-namespace db;
+namespace atomic\db;
 
 require (__DIR__."/../config/db.php");
 
 use PDO;
+use PDOStatement;
 use PDOException;
-use Exception;
+use http\HTTPException;
 
 final class DB extends CONFIG
 {
-    private $conexion;
-    private $consulta;
+    private $__connection;
+    private $__query;
 
-    final private function conexion ($host = null, $db = null, $port = null, $user = null, $pass = null) {
-        if (!is_object ($this->conexion)) {
-            $host = $host ?? $this::HOST;
-            $db = $db ?? $this::DB;
-            $port = $port ?? $this::PORT;
-            $user = $user ?? $this::USER;
-            $pass = $pass ?? $this::PASS;
-
-            try {
-                $this->conexion = new PDO ("mysql:host={$host};dbname={$db};port={$port}", $user, $pass);
-                $this->conexion->exec ("SET CHARACTER SET utf8mb4");
-                $this->conexion->setAttribute (PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (PDOException $e) {
-                throw new Exception ("500::".$e->getMessage ());
-            }
-        }
+    public function __construct (string $host = null, string $db = null, string $user = null, string $pass = null, int $port = null) {
+        $this->host = $host ?? $this->host;
+        $this->db = $db ?? $this->db;
+        $this->user = $user ?? $this->user;
+        $this->pass = $pass ?? $this->pass;
+        $this->port = $port ?? $this->port;
     }
 
-    function __clone () {
-        $this->conexion = null;
-    }
-
-    final public function query ($query, $buffer = TRUE) {
-        $this->conexion ();
+    final private function connect () : void {
+        if (is_object($this->__connection)) { return; }
 
         try {
-            $this->consulta = $this->conexion->prepare ($query, array (PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => $buffer));
-            $this->consulta->execute ();
+            $this->__connection = new PDO ("mysql:host={$this->host};dbname={$this->db};port={$this->port}", $this->user, $this->pass);
+            $this->__connection->exec ("SET CHARACTER SET utf8");
+            $this->__connection->setAttribute (PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            throw new Exception ("404::".$e->getMessage ());
+            throw new HTTPException (500, $e->getMessage());
+        }
+    }
+
+    final public function query (string $query, bool $buffer = true) : PDOStatement {
+        $this->connect ();
+
+        try {
+            $this->__query = $this->__connection->prepare ($query, [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => $buffer]);
+            $this->__query->execute ();
+
+            return $this->__query;
+
+        } catch (PDOException $e) {
+            throw new HTTPException (500, $e->getMessage());
+        }
+    }
+
+    final public function startTransaction () : void {
+        $this->__connection->beginTransaction ();
+    }
+
+    final public function rollback () : void {
+        $this->__connection->rollback ();
+    }
+
+    final public function commit () : void {
+        $this->__connection->commit ();
+    }
+
+    final public function loadData (string $file, string $table, string $separator) : void {
+        if (preg_match("` `", trim($file).trim($table).trim($separator))) {
+            throw new HTTPException (500, "Error loadData");
         }
 
-        return $this->consulta;
-    }
+        $file = str_replace ("\\", "/", $file);
 
-    final public function startTransaction () {
-        $this->conexion->beginTransaction ();
-    }
-
-    final public function rollback () {
-        $this->conexion->rollBack ();
-    }
-
-    final public function commit () {
-        $this->conexion->commit ();
-    }
-
-    final public function loadData (String $archivo, String $tabla, String $separador) {
-        if (preg_match ("` `", trim ($archivo).trim ($tabla).trim ($separador))) {
-            throw new Exception ("500::Carga fallida.");
-        }
-
-        $query = "LOAD DATA INFILE \"".str_replace ("\\", "/", $archivo)."\" "
-            . "INTO TABLE `".$tabla."` "
-            . "FIELDS TERMINATED BY \"".$separador."\" "
-            . "LINES TERMINATED BY \"\\n\"";
-
+        $query = <<<QUERY
+            LOAD DATA INFILE "{$file}"
+            INTO TABLE `{$table}`
+            FIELDS TERMINATED BY "{$separator}"
+            LINES TERMINATED BY "\\n"
+QUERY;
         $this->query ($query);
-    }
-
-    final public function conect ($host, $db, $user, $pass, $port) {
-        if ($this->conexion === null) {
-            $this->conexion ($host, $db, $port, $user, $pass);
-        } else {
-            throw new Exception ("500::Conexión activa, imposible realizar otra.");
-        }
     }
 }

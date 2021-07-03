@@ -1,48 +1,50 @@
 <?php
 /*
- * FECHA: 2020/03/17
+ * FECHA: 2021/06/25
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: stdCore.php
- *
- * Descripción: Núcleo estandard para la extensión ejecución de controladores
+ * 
+ * Descripción: Núcleo estandard para controladores
 */
 
-namespace core;
+namespace atomic;
 
 require ("dbCore.php");
-require (__DIR__."/../file/file.php");
-require (__DIR__."/../scheme/scheme.php");
+require ("functionCore.php");
 require (__DIR__."/../middleware/middleware.php");
 
 use http\HTTPRoute;
+use atomic\db\DB;
 
-abstract class stdCore extends dbCore
+use SplFixedArray;
+
+abstract class STDCore extends DBCORE
 {
-    protected $middlewares;
-    protected $route;
+    use FUNCTIONCORE;
 
-    function __construct () {
-        parent::__construct (); //Se crea la instancia de db
+    private MIDDLEWARE $middle;
+    protected HTTPRoute $route;
 
-        $this->middlewares = new MIDDLEWARE;
+    public function __construct () {
+        parent::__construct ();
+
         $this->route = new HTTPRoute;
+        $this->middle = new MIDDLEWARE;
 
-        $this->middleware (); //Se cargan los middleware generales
-        $this->routes (); //Se cargan las rutas de la app
+        $this->setRoutes ();
+        $this->middlewareToRoutes ($this->middle->get());
     }
 
-    abstract protected function routes () : void;
+    abstract protected function setRoutes () : void;
 
     final public function getRoutes () : HTTPRoute {
         return $this->route;
     }
 
-    final private function middleware () : void {
-        $middle;
-
-        foreach ($this->middlewares->getMiddle () as $middle) {
-            $this->route->setMiddleware ($middle[0], $middle[1]);
+    final private function middlewareToRoutes (SplFixedArray $middle) : void {
+        foreach ($middle as $m) {
+            $this->route->setMiddleware ($m[0], $m{1});
         }
     }
 }

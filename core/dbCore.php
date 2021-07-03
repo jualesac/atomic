@@ -1,6 +1,6 @@
 <?php
 /*
- * FECHA: 2020/03/20
+ * FECHA: 2021/06/25
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: dbCore.php
@@ -8,19 +8,18 @@
  * Descripción: Permite iniciar una única instancia hacia la base de datos
 */
 
-namespace core;
+namespace atomic;
 
 require (__DIR__."/../db/db.php");
 
-use db\DB;
+use atomic\db\DB;
 
-abstract class dbCore
+abstract class DBCORE
 {
-    protected static $db;
+    protected static DB $db;
 
-    function __construct () {
-        if (!$this::$db) {
-
+    public function __construct () {
+        if (!isset($this::$db)) {
             $this::$db = new DB;
         }
     }

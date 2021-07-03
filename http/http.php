@@ -1,153 +1,175 @@
 <?php
 /*
- * FECHA: 2020/03/09
+ * FECHA:2021/06/06
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: http.php
- *
- * Descripción: Envoltura para el manejo de peticiones HTTP
+ * 
+ * Descripción: Envoltura para API REST
 */
 
 namespace http;
 
 require ("exception/httpException.php");
-require ("httpStd.php");
 require ("request/request.php");
 require ("resolve/resolve.php");
+require ("scheme/scheme.php");
+require ("route/httpRoute.php");
 
+use http\resolve\RESOLVE;
+use http\request\REQUEST;
+use http\scheme\SCHEME;
 use Exception;
 
-class HTTP
+final class HTTP
 {
-    //Parámetros
-    private $request;
-    private $url_default;
-    private $routes; //Utilizada por HTTPRoute
+    private string $__request;
+    private string $__url = "";
+    private object $__req;
+    private object $__res;
+    private object $__scheme;
 
-    public $method;
-    public $utf8 = false;
-    public $headers = [];
+    private string $__method;
 
-    function __construct () {
-        if (!isset ($_SERVER["REQUEST_SCHEME"])) { exit ("Se requiere un esquema HTTP"); }
+    public bool $utf8;
+    public array $header;
 
-        $this->request = REQUEST::castUrl (REQUEST::rmGets ($_SERVER["REQUEST_URI"]));
-        $this->method = $_SERVER["REQUEST_METHOD"];
+    public function __construct () {
+        if (!isset ($_SERVER["REQUEST_SCHEME"])) {
+            exit ("Se require un esquema HTTP");
+        }
+
+        $this->__request = REQUEST::castUrl (REQUEST::removeGets($_SERVER["REQUEST_URI"]));
+        $this->__method = $_SERVER["REQUEST_METHOD"];
+
+        $this->utf8 = false;
+        $this->header = [
+            "Connection" => "close",
+            "Content-Type" => "application/x-www-form-urlencoded"
+        ];
+
+        $this->__req = new REQUEST;
+        $this->__res = new RESOLVE;
+        $this->__scheme = new SCHEME ($this->__req);
     }
 
-    //Obtiene la ruta default
-    final public function getUrl () : string {
-        return $this->url_default;
+    final public function getURL () : string {
+        return $this->__url;
     }
 
-    //Crea una ruta default o permite un punto de ejecución para rutas
-    final public function use (string $url, HTTPRoute $httpRoute = null) {
-        if (!isset ($httpRoute)) {
-            $this->url_default = REQUEST::castUrl (trim ($url));
+    final public function use (string $url, HTTPRoute $routes = null) : void {
+        $url = REQUEST::castUrl (trim($url));
+        
+        $this->__url = $url;
+        
+        if (!isset($routes)) {
             return;
         }
 
-        $route;
-        $url = REQUEST::castUrl (trim ($url));
-        $httpRoute->setContext ($this);
+        if (!preg_match("`^{$url}`i", ($_SERVER["PATH_INFO"] ?? "/"))) {
+            return;
+        }
 
-        try {
-            //Ejecución de middlewares generales
-            $this->middlewares ($httpRoute->getMiddlewares ());
-            $this->routes = $httpRoute->getRoutes (); //Obtiene un objeto ROUTE
+        $pkMiddlewares = $routes->getMiddlewares ();
+        $pkRoutes = $routes->getRoutes ();
 
-            while ($route = $this->routes->getRoute ()) {
-                $this->methods ($this->method, $url.$route[0], $route[1] ?? function () {}, $route[2]);
-            }
+        foreach ($pkMiddlewares as $m) {
+            $arg = $this->methodConstruct ($m[0], $m[1], null, null);
+            
+            $this->methods ($this->__method, $this->__req->castUrl($arg[0]), $arg[1], $arg[2], $arg[3], $m[2]);
+        }
 
-            unset ($this->routes);
-        } catch (HTTPException $e) {
-            RESOLVE::splResponse ($e->getState (), $this->utf8);
-        } catch (Exception $e) {
-            RESOLVE::splResponse (HTTPException::parse ($e->getMessage ()), $this->utf8);
+        foreach ($pkRoutes as $r) {
+            $arg = $this->methodConstruct ($r[0], $r[1], $r[2] ?? null, $r[3] ?? null);
+            
+            $this->methods ($this->__method, $this->__req->castUrl($arg[0]), $arg[1], $arg[2], $arg[3]);
         }
     }
 
-    /********** VERBOS **********/
-    final public function get (string $url, callable $middle, callable $callback = null) {
-        $this->methods ("GET", $url, $middle, $callback);
+    final public function get (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+        $arg = $this->methodConstruct($url, $schema, $middle, $callback);
+
+        $this->methods ("GET", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    final public function post (string $url, callable $middle, callable $callback = null) {
-        $this->methods ("POST", $url, $middle, $callback);
+    final public function post (string $url, $schema, callable $middle = null, callable $callback = null) : void {        
+        $arg = $this->methodConstruct($url, $schema, $middle, $callback);
+
+        $this->methods ("POST", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    final public function put (string $url, callable $middle, callable $callback = null) {
-        $this->methods ("PUT", $url, $middle, $callback);
+    final public function put (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+        $arg = $this->methodConstruct($url, $schema, $middle, $callback);
+
+        $this->methods ("PUT", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    final public function delete (string $url, callable $middle, callable $callback = null) {
-        $this->methods ("DELETE", $url, $middle, $callback);
+    final public function delete (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+        $arg = $this->methodConstruct($url, $schema, $middle, $callback);
+
+        $this->methods ("DELETE", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
-    /****************************/
-    //Valida la ruta solicitada contra la petición formal, retorna la url por referencia
-    final public function checkRequest (string &$url, bool $strict = true) : bool {
+
+    final private function methodConstruct ($url, $schema, callable $middle = null, callable $callback = null) : array {
+        if (is_callable($schema)) {
+            $callback = $middle;
+            $middle = $schema;
+            $schema = [];
+        }
+
+        if ($callback === null) {
+            $callback = $middle;
+            $middle = function () {};
+        }
+
+        return [
+            $url,
+            $schema,
+            $middle,
+            $callback
+        ];
+    }
+
+    final private function methods (string $method, string $url, array $schema = [], callable $middle, callable $callback, bool $strict = true) : void {
+        if (!$this->checkRequest($url, $strict) || $this->__method !== $method) {
+            return;
+        }
+
+        try {
+            $this->__res->utf8 = $this->utf8;
+            $this->__res->redirect->url = $this->__url;
+            $this->__res->redirect->header = $this->header;
+            $this->__res->httpRequest->url = $this->__url;
+            $this->__res->httpRequest->header = $this->header;
+            $this->__req->setParams ($url);
+            
+            if (!$this->__scheme->test ($schema)) {
+                return;
+            }
+
+            $middle ($this->__res, $this->__req);
+            $callback ($this->__res, $this->__req);
+            
+        } catch (HTTPException $e) {
+            RESOLVE::jsonResponse ($e->getException ()[0], $e->getException()[2] ?? [ "message" => $e->getException()[1] ], $this->utf8);
+        } catch (Exception $e) {
+            $except = HTTPException::parse ($e->getMessage());
+            RESOLVE::jsonResponse ($except[0], [ "message" => $except[1] ], $this->utf8);
+        }
+    }
+
+    final public function checkRequest (string &$url, bool $strict = null) : bool {
         $uri;
 
-        preg_match ("`/(/.{0,})`i", trim ($url), $uri);
-        //Se validan las diagonales dobles
-        $url = $_SERVER["SCRIPT_NAME"].($uri[1] ?? ($this->url_default.REQUEST::castUrl ($url)));
-        $url_pattern = REQUEST::getRegexUrl ($url, $strict);
-
-        if (preg_match ($url_pattern, $this->request)) {
+        preg_match ("`^/(/.{0,})`i", trim($url), $uri);
+        
+        $url = $_SERVER["SCRIPT_NAME"].($uri[1] ?? ($this->__url.REQUEST::castUrl($url)));
+        $url_regex = REQUEST::castRegexUrl ($url, $strict);
+        //var_dump ("\n---{$url}");
+        if (preg_match($url_regex, $this->__request)) {
             return true;
         }
 
         return false;
-    }
-
-    //EJECUCIÓN
-    final private function methods (string $method, string $url, callable $middle, callable $callback = null) {
-        $res;
-        $req;
-        //Se valida con la petición general
-        if (!$this->checkRequest ($url) || ($this->method !== $method)) {
-            return;
-        }
-        //Asignaciones
-        if ($callback === null) {
-            $callback = $middle;
-            $middle = function () { };
-        }
-        //Ejecuciones
-        try {
-            $res = new RESOLVE ($this->url_default, $this->headers, $this->utf8);
-            $req = new REQUEST ($url);
-            //Verificar si existe un punto de entrada HTTPRoute
-            if (isset ($this->routes) && get_class ($this->routes) === "http\ROUTE") {
-                $this->middlewares ($this->routes->getMiddlewares ());
-            }
-
-            $middle ($res, $req); //middleware
-            $callback ($res, $req); //Main
-            //Liberación de memoria
-            $res = null;
-            $req = null;
-        } catch (HTTPException $e) {
-            RESOLVE::splResponse ($e->getState (), $this->utf8);
-        } catch (Exception $e) {
-            RESOLVE::splResponse (HTTPException::parse ($e->getMessage ()), $this->utf8);
-        }
-    }
-
-    //Ejecución de Middlewares
-    final private function middlewares (array $middlewares) {
-        $middle;
-        $res = new RESOLVE ($this->url_default, $this->headers, $this->utf8);
-        $req;
-
-        foreach ($middlewares as $middle) {
-            $req = new REQUEST ($middle[0]);
-
-            $middle[1] ($res, $req);
-            $req = null;
-        }
-
-        $res = null;
     }
 }

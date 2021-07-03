@@ -1,6 +1,6 @@
 <?php
 /*
- * FECHA: 2020/03/09
+ * FECHA: 2021/06/08
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: file.php
@@ -8,18 +8,19 @@
  * Descripción: Clase validadora de archivos cargados
 */
 
-namespace http;
+namespace http\request;
 
-class FILE extends HTTPstd
+use Exception;
+
+abstract class FILE
 {
     private const FILE_SIZE = 67108864;
-    protected $file;
+    protected object $file;
 
     function __construct () {
         $this->file = $this->getFiles ();
     }
 
-    //Estructuración de archivos obtenidos por post
     final private function getFiles () : object {
         $files = $_FILES;
         $arrFiles = [];
@@ -47,17 +48,16 @@ class FILE extends HTTPstd
         return $this->checkFiles ($arrFiles);
     }
 
-    //Comprobación de archivos correctos
     final private function checkFiles (array $files) : object {
         array_map (function ($file) {
             if (isset ($file["name"])) {
                 //Comprobaciones de archivo
                 if (!is_uploaded_file ($file["tmp_name"])) {
-                    throw new HTTPException (205, "El archivo \"{$file["name"]}\" no fue subido por un protocolo válido.");
+                    throw new Exception ("205::El archivo \"{$file["name"]}\" no fue subido por un protocolo válido.");
                 }
 
                 if ($file["size"] > self::FILE_SIZE) {
-                    throw new HTTPException (205, "El archivo \"{$file["name"]}\" supera el tamaño permitido.");
+                    throw new Exception ("205::El archivo \"{$file["name"]}\" supera el tamaño permitido.");
                 }
 
                 return;

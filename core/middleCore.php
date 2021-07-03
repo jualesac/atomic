@@ -1,32 +1,39 @@
 <?php
 /*
- * FECHA: 2020/03/17
+ * FECHA: 2021/06/25
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: middleCore.php
  *
- * Descripción: Interface para el módulo de configuración de middles.php
+ * Descripción: Clase estandar para la creación de middlewares
 */
 
-namespace core;
+namespace atomic;
 
-abstract class middleCore extends dbCore
+use SplFixedArray;
+
+abstract class MIDDLECORE extends DBCORE
 {
-    private $middlewares = [];
+    private SplFixedArray $__middle;
 
-    function __construct () {
+    public function __construct () {
         parent::__construct ();
 
-        $this->middlewares ();
+        $this->__middle = new SplFixedArray (0);
+
+        $this->setMiddlewares ();
     }
 
-    abstract protected function middlewares () : void;
+    abstract protected function setMiddlewares () : void;
 
-    final protected function setMiddle (callable $middleware, bool $strict = null) {
-        $this->middlewares[] = [ $middleware, (($strict === null || $strict === false) ? false : true) ];
+    final protected function set (callable $middleware, bool $strict = false) {
+        $k = $this->__middle->count ();
+
+        $this->__middle->setSize ($k + 1);
+        $this->__middle[$k] = [ $middleware, $strict ];
     }
 
-    final public function getMiddle () : array {
-        return $this->middlewares;
+    final public function get () : SplFixedArray {
+        return $this->__middle;
     }
 }

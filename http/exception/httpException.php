@@ -1,6 +1,6 @@
 <?php
 /*
- * FECHA: 2020/03/09
+ * FECHA: 2021/06/09
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: httpException.php
@@ -14,52 +14,72 @@ use Exception;
 
 final class HTTPException extends Exception
 {
-    private const DEFAULT_STATE = [
+    private const __default = [
         "state" => 418,
-        "message" => "Imposible hacer el café, soy una tetéra"
+        "message" => "Error genérico"
     ];
-    private $_state;
 
-    public function __construct ($state = null, string $message = null) {
-        $cols = [ "state", "message" ];
+    private int $__state;
+    private string $__message;
+    private array $__content;
 
-        if (is_array ($state)) {
-            $this->_state = array_combine ($cols, $state);
+    final public function __construct (...$args) {
+        if ((is_int($args[0]) || is_string($args[0])) && is_string($args[1])) {
+            $this->construct0 ((int) $args[0], $args[1]);
+        } elseif (is_array($args[0])) {
+            $this->construct1 ($args[0]);
+        } elseif ((is_int($args[0]) || is_string($args[0])) && is_array($args[1])) {
+            $this->construct2 ($args[0], $args[1]);
         } else {
-            $this->_state = array_combine ($cols, [ $state ?? $this::DEFAULT_STATE["state"], $message ?? $this::DEFAULT_STATE["message"] ]);
-        }
-        //Se llama al constructor padre
-        parent::__construct ($this->_state["message"]);
-    }
-
-    public function __toString () {
-        return "{$this->_state["state"]}::{$this->_state["message"]}";
-    }
-
-
-    final public function getState () : array {
-        $state = [];
-        $k; $v;
-
-        foreach ($this->_state as $k => $v) {
-            $state[] = $v;
-            $state[$k] = $v;
+            $this->construct3 ();
         }
 
-        return $state;
+        parent::__construct ($this->__message);
     }
 
-    //Convierte una cadena del tipo "183::Mensaje" en un array
+    final private function construct0 (int $a, string $b) : void {
+        $this->__state = $a;
+        $this->__message = $b;
+    }
+
+    final private function construct1 (array $a) : void {
+        $this->__state = (int) ($a["state"] ?? $a[0]);
+        $this->__message = ($a["message"] ?? $a[1]);
+    }
+
+    final private function construct2 (int $a, array $b) : void {
+        $this->__state = $a;
+        $this->__content = $b;
+        $this->__message = "";
+    }
+
+    final private function construct3 () : void {
+        $this->__state = $this->__default["state"];
+        $this->__message = $this->__default["message"];
+    }
+
+    final public function __toString () : string {
+        return "{$this->__state}::{$this->__message}";
+    }
+
+    final public function getException () : array {
+        return [
+            $this->__state,
+            $this->__message,
+            $this->__content ?? null,
+            "state" => $this->__state,
+            "message" => $this->__message,
+            "content" => $this->__content ?? null
+        ];
+    }
+
     final public static function parse (string $message) : array {
-        $array = explode ("::", $message);
+        $a = explode ("::", $message);
 
-        if (count ($array) === 1) {
-            $array = [
-                500,
-                "[FAILED TO GET STATUS]:: {$message}"
-            ];
+        if (count($a) < 2) {
+            return [ 500, "[FAILED TO GET STATUS]::{$message}"];
         }
 
-        return $array;
+        return $a;
     }
 }

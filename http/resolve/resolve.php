@@ -1,91 +1,65 @@
 <?php
 /*
- * FECHA: 2020/03/09
+ * FECHA: 2021/06/08
  * AUTOR: Julio Alejandro Santos Corona
  * CORREO: jualesac@yahoo.com
  * TÍTULO: resolve.php
- *
- * Descripción: Objeto para la resolución de petición
+ * 
+ * Descripción: Clase para la resolución de peticiones
 */
 
-namespace http;
+namespace http\resolve;
 
+require ("send.php");
 require ("stream.php");
+require ("redirect.php");
+require ("response.php");
 
-class RESOLVE extends STREAM
+final class RESOLVE extends SEND
 {
-    private $COD_UTF8;
+    public bool $utf8 = false;
+    public object $httpRequest;
+    public object $redirect;
 
-    function __construct (string $url = null, array $headers = [], bool $utf8 = null) {
-        parent::__construct ($url, $headers);
+    public function __construct () {
+        parent::__construct ();
 
-        $this->COD_UTF8 = $utf8;
+        $this->httpRequest = new STREAM;
+        $this->redirect = new REDIRECT ($this->httpRequest);
     }
 
-    //Codifica una cadena en utf8
-    final public static function utf8 (string $text) : string {
-        if ($text && (mb_detect_encoding ($text, "UTF-8", true) !== "UTF-8")) {
-            $text = utf8_encode (trim ($text));
+    final public static function utf8Encode (string $text) : string {
+        if ($text && (mb_detect_encoding($text, "UTF-8", true) !== "UTF-8")) {
+            $text = utf8_encode (trim($text));
         }
 
         return $text;
     }
 
-    //Respuesta simple en JSON
-    final public static function splResponse (array $response, bool $utf8 = null) {
-        $res["message"] = $utf8 ? self::utf8 ($response[1]) : $response[1];
+    final public function response (...$args) : void {
+        $res = new RESPONSE ($args);
 
-        header ("HTTP/1.1 {$response[0]}");
-        header ("Content-Type: application/json; charset = utf-8");
+        $this->loadHeaders ();
 
-        exit (json_encode ($res));
+        $this->jsonResponse ($res->__state, $res->__content, ( !$res->__utf8isNull ? $res->__utf8 : $this->utf8 ));
     }
 
-    //Se encarga de codificar en utf8 todo el contenido de un array/objeto
-    final private function encodeUTF8 ($response) : array {
-        return array_map (function ($cell) {
-            $cod;
-
-            if (is_array ($cell) || is_object ($cell)) {
-                $cod = $this->encodeUTF8 ($cell);
-            } else {
-                $cod = $this::utf8 ($cell);
-            }
-
-            return $cod;
-        }, (array) $response);
-    }
-
-    //Respuesta general en JSON
-    final public function response ($state, $message, $utf8 = null) {
-        if (is_array ($state)) {
-            $codifing = ((boolean) $message ?? null) ?? $this->COD_UTF8;
-            $message = $state["message"] ?? $state[1];
-            $state = $state["state"] ?? $state[0];
-        }
-
-        $response;
-        //La respuesta siempre debe ser un array
-        if (is_object ($message)) {
-            $message = (array) $message;
-        }
-
-        if (!is_array ($message)) {
-            $response["message"] = $message;
-        }
-
-        $response = $response ?? $message;
+    final public static function jsonResponse (int $state, array $content, bool $utf8 = false) : void {
+        $content = $utf8 ? self::utf8EncodeArray($content) : $content;
 
         header ("HTTP/1.1 {$state}");
-        header ("Content-Type: application/json; charset = utf-8");
+        header ("Content-Type: application/json; charset=UTF-8;");
 
-        exit (json_encode (($utf8 ?? $this->COD_UTF8) === true ? $this->encodeUTF8 ($response) : $response));
+        exit (json_encode($content));
     }
 
-    //Método para redireccionar, la redirección siempres es por verbo GET
-    final public function redirect (string $ruta) {
-        header ("Status: 302 Moved Permanently", false, 302);
-        header ("Location: {$ruta}");
-        exit ();
+    final private function utf8EncodeArray ($content) : array {
+        return array_map (function ($c) {
+            if (is_array($c) || is_object($c)) {
+                return self::utf8EncodeArray ($c);
+            }
+            
+            return self::utf8Encode ($c);
+        }, (is_array($content) ? $content : (array) $content) );
     }
 }
