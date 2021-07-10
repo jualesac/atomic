@@ -55,7 +55,7 @@ final class HTTPRoute extends HTTPMiddleware
         return $this->__routes;
     }
 
-    final private function route (string $route, $schema, ...$functions) : void {
+    private function route (string $route, $schema, ...$functions) : void {
         $this->__routes[$this->addArray($this->__routes)] = [
             trim($route),
             $schema,

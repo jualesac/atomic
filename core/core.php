@@ -57,7 +57,7 @@ final class CORE extends CONFIG
         //throw new HTTPException (404, "Unknown Application");
     }
 
-    final private function state404 () : void {
+    private function state404 () : void {
         header ("HTTP/1.1 404");
         header ("Content-Type: text/html; charset=UTF-8;");
 

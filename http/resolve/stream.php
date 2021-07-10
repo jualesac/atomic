@@ -50,7 +50,7 @@ final class STREAM
         $this->stream ("DELETE", $url, $body);
     }
 
-    final private function stream (string $method, string $url, $body = []) : void {
+    private function stream (string $method, string $url, $body = []) : void {
         $proto = $this->secureProtocol ? "https" : "http";
         $_url = preg_match("`^//`", $url) ? "" : $this->url;
         $state;
@@ -86,7 +86,7 @@ final class STREAM
         }
     }
 
-    final private function headerToString (array $headers = []) : string {
+    private function headerToString (array $headers = []) : string {
         $header = "";
 
         foreach ($headers as $k => $h) {

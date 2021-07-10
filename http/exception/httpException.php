@@ -37,23 +37,23 @@ final class HTTPException extends Exception
         parent::__construct ($this->__message);
     }
 
-    final private function construct0 (int $a, string $b) : void {
+    private function construct0 (int $a, string $b) : void {
         $this->__state = $a;
         $this->__message = $b;
     }
 
-    final private function construct1 (array $a) : void {
+    private function construct1 (array $a) : void {
         $this->__state = (int) ($a["state"] ?? $a[0]);
         $this->__message = ($a["message"] ?? $a[1]);
     }
 
-    final private function construct2 (int $a, array $b) : void {
+    private function construct2 (int $a, array $b) : void {
         $this->__state = $a;
         $this->__content = $b;
         $this->__message = "";
     }
 
-    final private function construct3 () : void {
+    private function construct3 () : void {
         $this->__state = $this->__default["state"];
         $this->__message = $this->__default["message"];
     }

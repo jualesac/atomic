@@ -36,25 +36,25 @@ final class RESPONSE
         }
     }
 
-    final private function __construct0 (int $a, array $b, bool $c = false) : void {
+    private function __construct0 (int $a, array $b, bool $c = false) : void {
         $this->__state = $a;
         $this->__content = $b;
         $this->__utf8 = $c;
     }
 
-    final private function __construct1 (array $a, bool $b = false) : void {
+    private function __construct1 (array $a, bool $b = false) : void {
         $this->__state = (int) ($a["state"] ?? $a[0]);
         $this->__content = $this->arrayEncode ( $a["content"] ?? ($a["message"] ?? $a[1]) );
         $this->__utf8 = $b;
     }
 
-    final private function __construct2 (int $a, $b, bool $c = false) : void {
+    private function __construct2 (int $a, $b, bool $c = false) : void {
         $this->__state = $a;
         $this->__content = $this->arrayEncode ($b);
         $this->__utf8 = $c;
     }
 
-    final private function arrayEncode ($content) : array {
+    private function arrayEncode ($content) : array {
         if (is_array($content)) { return $content; }
         if (is_object($content)) { return (array) $content; }
 

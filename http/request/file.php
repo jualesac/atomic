@@ -21,7 +21,7 @@ abstract class FILE
         $this->file = $this->getFiles ();
     }
 
-    final private function getFiles () : object {
+    private function getFiles () : object {
         $files = $_FILES;
         $arrFiles = [];
         $file;
@@ -48,7 +48,7 @@ abstract class FILE
         return $this->checkFiles ($arrFiles);
     }
 
-    final private function checkFiles (array $files) : object {
+    private function checkFiles (array $files) : object {
         array_map (function ($file) {
             if (isset ($file["name"])) {
                 //Comprobaciones de archivo

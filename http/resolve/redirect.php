@@ -54,7 +54,7 @@ final class REDIRECT
         });
     }
 
-    final private function __red (callable $callback) : void {
+    private function __red (callable $callback) : void {
         $this->httpRequest->host = $_SERVER["HTTP_HOST"];
         $this->httpRequest->script = $_SERVER["SCRIPT_NAME"];
         $this->httpRequest->url = $this->url;
@@ -64,7 +64,7 @@ final class REDIRECT
         $callback ();
     }
 
-    final private function response (int $state, string $content) : void {
+    private function response (int $state, string $content) : void {
         header ("HTTP/1.1 {$state}");
         header ("Content-Type: application/json; charset=UTF-8;");
 

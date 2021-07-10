@@ -110,7 +110,7 @@ final class HTTP
         $this->methods ("DELETE", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    final private function methodConstruct ($url, $schema, callable $middle = null, callable $callback = null) : array {
+    private function methodConstruct ($url, $schema, callable $middle = null, callable $callback = null) : array {
         if (is_callable($schema)) {
             $callback = $middle;
             $middle = $schema;
@@ -130,7 +130,7 @@ final class HTTP
         ];
     }
 
-    final private function methods (string $method, string $url, array $schema = [], callable $middle, callable $callback, bool $strict = true) : void {
+    private function methods (string $method, string $url, array $schema = [], callable $middle, callable $callback, bool $strict = true) : void {
         if (!$this->checkRequest($url, $strict) || $this->__method !== $method) {
             return;
         }

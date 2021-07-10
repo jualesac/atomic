@@ -42,7 +42,7 @@ final class SCHEME
         return true;
     }
 
-    final private function iterate (array $scheme, object $req) : void {
+    private function iterate (array $scheme, object $req) : void {
         foreach ($scheme as $k => $s) {
             (string) $type = is_array($s) ? ($s[0] ?? "") : $s;
             (bool) $validate = is_array($s) ? ($s[1] ?? true) : true;
@@ -62,7 +62,7 @@ final class SCHEME
         }
     }
 
-    final private function checkType (string $type, string $value, $validate = true) : bool {
+    private function checkType (string $type, string $value, $validate = true) : bool {
         $flag = false;
 
         switch ($type) {

@@ -42,9 +42,9 @@ abstract class STDCore extends DBCORE
         return $this->route;
     }
 
-    final private function middlewareToRoutes (SplFixedArray $middle) : void {
+    private function middlewareToRoutes (SplFixedArray $middle) : void {
         foreach ($middle as $m) {
-            $this->route->setMiddleware ($m[0], $m{1});
+            $this->route->setMiddleware ($m[0], $m[1]);
         }
     }
 }

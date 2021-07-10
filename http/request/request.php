@@ -50,7 +50,7 @@ final class REQUEST extends FILE
         $this->param = $this->getParams ($uri);
     }
 
-    final private function getURLValues (string $input = null) : object {
+    private function getURLValues (string $input = null) : object {
         $values = [];
 
         preg_match_all ($this::_VAL, ($input ?? $_SERVER["REQUEST_URI"]), $values);
@@ -60,7 +60,7 @@ final class REQUEST extends FILE
         }, array_combine($values[1], $values[2]));
     }
 
-    final private function getParams (string $uri) : object {
+    private function getParams (string $uri) : object {
         $keys = [];
         $vals = [];
 
@@ -73,7 +73,7 @@ final class REQUEST extends FILE
         }, $vals));
     }
 
-    final private function getBody () : object {
+    private function getBody () : object {
         return (
             (file_get_contents("php://input", false, null, 0, 5) === "")
             || ($_SERVER["REQUEST_METHOD"] === "GET")

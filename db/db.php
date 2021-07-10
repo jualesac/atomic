@@ -30,7 +30,7 @@ final class DB extends CONFIG
         $this->port = $port ?? $this->port;
     }
 
-    final private function connect () : void {
+    private function connect () : void {
         if (is_object($this->__connection)) { return; }
 
         try {
