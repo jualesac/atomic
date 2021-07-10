@@ -23,9 +23,9 @@ final class SCHEME
     }
 
     final public function test (array $scheme) : bool {
-        $scheme["param"] = isset($scheme["param"]) ? $scheme["param"] : [];
-        $scheme["get"] = isset($scheme["get"]) ? $scheme["get"] : [];
-        $scheme["body"] = isset($scheme["body"]) ? $scheme["body"] : [];
+        $scheme["param"] = $scheme["param"] ?? [];
+        $scheme["get"] = $scheme["get"] ?? [];
+        $scheme["body"] = $scheme["body"] ?? [];
 
         try {
             $this->iterate ($scheme["param"], $this->__req->param);
@@ -44,10 +44,10 @@ final class SCHEME
 
     final private function iterate (array $scheme, object $req) : void {
         foreach ($scheme as $k => $s) {
-            (string) $type = isset($s["type"]) ? $s["type"] : "";
-            (bool) $validate = isset($s["validate"]) ? $s["validate"] : true;
+            (string) $type = is_array($s) ? ($s[0] ?? "") : $s;
+            (bool) $validate = is_array($s) ? ($s[1] ?? true) : true;
             (bool) $require = (substr($k, -1) != "*") ? true : false;
-            
+
             $k = str_replace ("*", "", $k);
 
             if ($require && !isset($req->$k)) {

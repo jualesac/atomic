@@ -39,7 +39,11 @@ HTML;
             $res->send (201, $html);
         });
 
-        $this->route->post ("/", function ($res, $req) {
+        $this->route->post ("/", [
+            "body" => [
+                "campo" => "number"
+            ]
+        ], function ($res, $req) {
             $res->response (200, $req);
         });
 

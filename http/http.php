@@ -173,3 +173,75 @@ final class HTTP
         return false;
     }
 }
+/*
+$http = new HTTP;
+$route = new HTTPRoute;
+
+$route->setMiddleware ("/:id", function ($res, $req) {
+    echo ("primer middle");
+}, true);
+
+$route->setMiddleware ("/2", function ($res, $req) {
+    echo ("Segundo middle");
+});
+
+$route->setMiddleware (function ($res, $req) {
+    echo ("Tercer middle");
+});
+
+$route->post ("/2", function ($res, $req) {
+    $res->response (200, $req);
+});
+
+$http->use ("/CAMPO1", $route);
+$http->use ("/CAMPO2", $route);
+
+/*$http->post ("//LOGOUT", function ($res, $req) {
+    $res->response (200, "Logout");
+});
+
+$http->post ("/2", function ($res, $req) {
+    if (!isset($req->header["session"])) {
+        //$res->redirect->url = "";
+        $res->redirect->post ("//LOGOUT");
+    }
+}, function ($res, $req) {
+    $res->response (200, $req);
+});*/
+
+/*$http->post ("//CAMPO1/CAMPO2/:id", function ($res, $req) {
+    var_dump ("middleware2");
+}, function ($res, $req) {
+    $res->response (203, $req, false);
+});
+
+$http->post ("/:id", [
+    "param" => [
+        "id" => [ "type" => "number" ]
+    ],
+
+    "body" => [
+        "nombre" => [],
+        "edad" => [ "type" => "number" ],
+        "rfc" => [ "type" => "`[a-z]{2}\d[a-f]`i", "require" => true ]
+
+    ]
+], function ($res, $req) {
+    var_dump ("hola");
+});
+
+$http->post ("/:id", [
+    "body" => [
+        "fecha" => [ "type" => "date" ],
+        "tiempo" => [ "type" => "datetime" ]
+    ]
+], function ($res, $req) {
+    var_dump ("middleware1");
+    //$res->response (200, "middleware");
+}, function ($res, $req) {
+    //$res->redirect->post ("/CAMPO2/91?saludo=hola", $req->body);
+    $res->httpRequest->post ("/CAMPO2/91", $req->body);
+    var_dump ($res->httpRequest->content);
+
+    $res->response (206, $res);
+});*/
