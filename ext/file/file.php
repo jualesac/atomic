@@ -23,7 +23,7 @@ final class FILE extends SetFile
         parent::__construct ($args);
     }
 
-    final public function setDefault (string $alias) : void {
+    final public function setDefault (string $alias, string $mode = null) : void {
         $this->__default = $this->aliasExists ($alias);
     }
 
@@ -122,11 +122,11 @@ final class FILE extends SetFile
         $numberOfAlias = $this->aliasExists ($alias);
 
         if ($this->__files[$numberOfAlias] === null) {
-            throw new Exception ("El archivo no está abierto: '{$this->__alias[$numberOfAlias][0]}'");
+            throw new Exception ("The file is not open:: '{$this->__alias[$numberOfAlias][0]}'");
         }
 
         if ( !(fwrite($this->__files[$numberOfAlias], $text)) ) {
-            throw new Exception ("Error al intentar escribir en el archivo: '{$this->__alias[$numberOfAlias][0]}'");
+            throw new Exception ("Error trying to write to file: '{$this->__alias[$numberOfAlias][0]}'");
         }
     }
 
@@ -142,11 +142,11 @@ final class FILE extends SetFile
             $this->__files[$numberOfAlias] = null;
         }
 
-        if (!file_exists($this->__alias[$numberOfAlias][1])) {
+        if (!file_exists($_alias[1])) {
             throw new Exception ("Non-existent file: '{$_alias[0]}'");
         }
 
-        if (!rename($this->__alias[$numberOfAlias][1], $path)) {
+        if (!rename($_alias[1], $path)) {
             throw new Exception ("Error moving file: '{$_alias[0]}'");
         }
 
