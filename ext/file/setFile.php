@@ -22,12 +22,14 @@ abstract class SetFile
     
     public bool $persistent;
 
-    public function __construct (array $args) {
+    protected function __construct (array $args) {
         if (count($args) == 0) { throw new Exception ("An argument was expected"); }
 
-        $this->__alias = new SplFixedArray (0);
-        $this->__files = new SplFixedArray (0);
-        $this->persistent = false;
+        if (!isset($this->__alias)) {
+            $this->__alias = new SplFixedArray (0);
+            $this->__files = new SplFixedArray (0);
+            $this->persistent = false;
+        }
 
         if (is_string($args[0])) {
             $this->construct0 ($args[0], ($args[1] ?? null));
