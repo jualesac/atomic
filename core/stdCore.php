@@ -13,6 +13,7 @@ namespace atomic;
 require ("dbCore.php");
 require ("functionCore.php");
 require (__DIR__."/../middleware/middleware.php");
+require (__DIR__."/../ext/file/file.php");
 
 use http\HTTPRoute;
 use atomic\db\DB;
