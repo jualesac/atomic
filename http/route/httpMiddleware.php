@@ -17,7 +17,7 @@ abstract class HTTPMiddleware
     private SplFixedArray $__middleMain;
     private SplFixedArray $__middle;
 
-    public function __construct () {
+    protected function __construct () {
         $this->__middleMain = new SplFixedArray (0);
         $this->__middle = new SplFixedArray (0);
     }
