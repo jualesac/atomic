@@ -21,7 +21,7 @@ abstract class SEND
         $this->__headers = new SplFixedArray (0);
     }
 
-    final public function setHeader ($headers) {
+    final public function setHeader ($headers) : void {
         if (is_string($headers)) {
             $headers = [$headers];
         }
@@ -37,7 +37,7 @@ abstract class SEND
         }
     }
 
-    final public function send (int $state, string $content) {
+    final public function send (int $state, string $content) : void {
         header ("HTTP/1.1 {$state}");
         
         $this->loadHeaders ();
