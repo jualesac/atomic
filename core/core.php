@@ -17,7 +17,6 @@ require (__DIR__."/../http/http.php");
 require ("stdCore.php");
 
 use http\{ HTTPException, HTTPRoute, request\REQUEST, HTTP };
-use Exception;
 
 final class CORE extends CONFIG
 {
