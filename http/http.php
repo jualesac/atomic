@@ -36,7 +36,7 @@ final class HTTP
 
     public function __construct () {
         if (!isset ($_SERVER["REQUEST_SCHEME"])) {
-            exit ("Se require un esquema HTTP");
+            exit ("An HTTP protocol is required");
         }
 
         $this->__request = REQUEST::castUrl (REQUEST::removeGets($_SERVER["REQUEST_URI"]));
