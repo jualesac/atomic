@@ -18,7 +18,7 @@ abstract class DBCORE
 {
     protected static DB $db;
 
-    public function __construct () {
+    protected function __construct () {
         if (!isset($this::$db)) {
             $this::$db = new DB;
         }
