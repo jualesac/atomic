@@ -10,8 +10,6 @@
 
 namespace atomic;
 
-require (__DIR__."/../core/stdCore.php");
-
 final class CONTROLLER extends STDCore
 {
     public function __construct () {

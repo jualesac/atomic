@@ -14,6 +14,8 @@ require (__DIR__."/../config/core.php");
 require (__DIR__."/../config/apps.php");
 require (__DIR__."/../http/http.php");
 
+require ("stdCore.php");
+
 use http\{ HTTPException, HTTPRoute, request\REQUEST, HTTP };
 use Exception;
 
