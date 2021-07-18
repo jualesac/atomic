@@ -23,7 +23,7 @@ abstract class SCHFile extends SCHData
     protected array $__parameters;
     protected SplFixedArray $__fileIndex;
 
-    public function __construct (array $schema) {
+    protected function __construct (array $schema) {
         parent::__construct ($schema);
 
         $this->__countColumns = 0;
