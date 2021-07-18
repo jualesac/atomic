@@ -11,7 +11,6 @@
 namespace http;
 
 use SplFixedArray;
-use HTTPException;
 
 abstract class HTTPMiddleware
 {
