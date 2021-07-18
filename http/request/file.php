@@ -17,7 +17,7 @@ abstract class FILE
     private const FILE_SIZE = 64000000;
     protected object $file;
 
-    function __construct () {
+    protected function __construct () {
         $this->file = $this->getFiles ();
     }
 
