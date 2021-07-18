@@ -17,7 +17,7 @@ abstract class SEND
 {
     private SplFixedArray $__headers;
 
-    public function __construct () {
+    protected function __construct () {
         $this->__headers = new SplFixedArray (0);
     }
 
