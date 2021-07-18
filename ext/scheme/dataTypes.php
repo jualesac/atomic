@@ -16,7 +16,7 @@ abstract class DATATYPES
 {
     public bool $strict;
 
-    public function __construct () {
+    protected function __construct () {
         $this->strict = false;
     }
 
