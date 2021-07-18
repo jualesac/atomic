@@ -28,7 +28,7 @@ abstract class STDCore extends DBCORE
     private MIDDLEWARE $middle;
     protected HTTPRoute $route;
 
-    public function __construct () {
+    protected function __construct () {
         parent::__construct ();
 
         $this->route = new HTTPRoute;
