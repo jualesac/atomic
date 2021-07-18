@@ -16,7 +16,7 @@ abstract class MIDDLECORE extends DBCORE
 {
     private SplFixedArray $__middle;
 
-    public function __construct () {
+    protected function __construct () {
         parent::__construct ();
 
         $this->__middle = new SplFixedArray (0);
