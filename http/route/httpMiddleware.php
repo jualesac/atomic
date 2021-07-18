@@ -11,6 +11,7 @@
 namespace http;
 
 use SplFixedArray;
+use HTTPException;
 
 abstract class HTTPMiddleware
 {
@@ -23,7 +24,7 @@ abstract class HTTPMiddleware
     }
 
     final public function setMiddleware ($url, $callback = null, bool $strict = false) : void {
-        if (!(is_string($url) || is_callable($url))) { throw new Exception ("La estructura de los argumentos no es correcta para el middleware"); }
+        if (!(is_string($url) || is_callable($url))) { throw new HTTPException (400, "The structure of the arguments is not correct for the middleware"); }
 
         if (is_callable($url)) {
             $strict = $callback;
