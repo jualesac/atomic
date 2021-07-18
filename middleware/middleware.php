@@ -10,8 +10,6 @@
 
 namespace atomic;
 
-require (__DIR__."/../core/middleCore.php");
-
 use http\HTTPException;
 
 final class MIDDLEWARE extends MIDDLECORE
