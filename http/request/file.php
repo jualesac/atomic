@@ -10,7 +10,7 @@
 
 namespace http\request;
 
-use Exception;
+use HTTPException;
 
 abstract class FILE
 {
@@ -53,11 +53,11 @@ abstract class FILE
             if (isset ($file["name"])) {
                 //Comprobaciones de archivo
                 if (!is_uploaded_file ($file["tmp_name"])) {
-                    throw new Exception ("205::El archivo \"{$file["name"]}\" no fue subido por un protocolo válido.");
+                    throw new HTTPException (205, "The file \"{$file["name"]}\" was not uploaded by a valid protocol");
                 }
 
                 if ($file["size"] > self::FILE_SIZE) {
-                    throw new Exception ("205::El archivo \"{$file["name"]}\" supera el tamaño permitido.");
+                    throw new HTTPException (205, "The file \"{$file["name"]}\" exceeds the allowed size");
                 }
 
                 return;
