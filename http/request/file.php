@@ -10,11 +10,11 @@
 
 namespace http\request;
 
-use HTTPException;
+use http\HTTPException;
 
 abstract class FILE
 {
-    private const FILE_SIZE = 67108864;
+    private const FILE_SIZE = 64000000;
     protected object $file;
 
     function __construct () {
