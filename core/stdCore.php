@@ -12,6 +12,7 @@ namespace atomic;
 
 require ("dbCore.php");
 require ("functionCore.php");
+require ("middleCore.php");
 require (__DIR__."/../middleware/middleware.php");
 require (__DIR__."/../ext/file/file.php");
 require (__DIR__."/../ext/scheme/scheme.php");
