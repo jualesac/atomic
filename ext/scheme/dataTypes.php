@@ -17,7 +17,7 @@ abstract class DATATYPES
     public bool $strict;
 
     protected function __construct () {
-        $this->strict = false;
+        $this->strict = true;
     }
 
     final protected function checkType (string &$value, string $type, bool $validate, callable $callback) : bool {
