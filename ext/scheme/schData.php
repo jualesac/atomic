@@ -20,7 +20,7 @@ abstract class SCHData extends DATATYPES
 
     protected array $__schema;
 
-    public function __construct (array $schema) {
+    protected function __construct (array $schema) {
         parent::__construct ();
 
         $this->__schema = $schema;
