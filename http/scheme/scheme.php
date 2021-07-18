@@ -76,13 +76,13 @@ final class SCHEME
                 $flag = preg_match("`^[A-Z0-9]+$`i");
                 break;
             case "date":
-                $flag = preg_match("`^\d{4}-[0-1]\d-[0-3]\d$`", $value);
+                $flag = preg_match("`^((\d{4}-(0[1-9]|1[0-2])-(0[1-9]|1\d|2\d|3[01]))|0000-00-00)$`", $value);
                 break;
             case "time":
-                $flag = preg_match("`^[0-2]\d:[0-5]\d(:[0-5]\d(\.\d+)?)?$`", $value);
+                $flag = preg_match("`^([01]\d|2[0-3]):([0-5]\d)((:[0-5]\d)?(\.\d+)?)?$`", $value);
                 break;
             case "datetime":
-                $flag = preg_match("`^\d{4}-[0-1]\d-[0-3]\d +[0-2]\d:[0-5]\d(:[0-5]\d(\.\d+)?)?$`", $value);
+                $flag = preg_match("`^((\d{4}-(0[1-9]|1[0-2])-(0[1-9]|1\d|2\d|3[01]))|0000-00-00) +([01]\d|2[0-3]):([0-5]\d)((:[0-5]\d)?(\.\d+)?)?$`", $value);
                 break;
             case "":
                 $flag = true;
