@@ -23,7 +23,7 @@ final class FILE extends SetFile
         parent::__construct ($args);
     }
 
-    final public function setDefault (string $alias, string $mode = null) : void {
+    final public function setDefault (string $alias) : void {
         $this->__default = $this->aliasExists ($alias);
     }
 
