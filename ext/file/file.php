@@ -18,6 +18,7 @@ final class FILE extends SetFile
 {
     private int $__default;
     private $__fileCurrent;
+    private $__modeFileCurrent;
 
     public function __construct (...$args) {
         parent::__construct ($args);
@@ -59,18 +60,21 @@ final class FILE extends SetFile
         $numberOfAlias = $alias ? $this->aliasExists($alias) : ($this->__fileCurrent ?? $this->__default);
         $_alias = $this->__alias[$numberOfAlias];
 
-        if ( !($this->__files[$numberOfAlias] = fopen($_alias[1], ($mode ?? $_alias[2]))) ) {
+        if ( !($this->__files[$numberOfAlias] = fopen($_alias[1], ($mode ?? ($this->$__modeFileCurrent ?? $_alias[2])))) ) {
             throw new Exception ("Error opening file");
         }
     }
 
-    final public function openAll () : void {
+    final public function openAll (array $modes = []) : void {
         foreach ($this->__alias as $n => $alias) {
             $this->__fileCurrent = $n;
+            $this->__modeFileCurrent = $modes[$n] ?? null;
+
             $this->open ();
         }
 
         $this->__fileCurrent = null;
+        $this->__modeFileCurrent = null;
     }
 
     final public function close (string $alias = null) : void {
@@ -102,7 +106,7 @@ final class FILE extends SetFile
         $this->__fileCurrent = null;
     }
 
-    final public function getLine (string $alias = null) : string|null {
+    final public function getLine (string $alias = null) {
         $numberOfAlias = $alias ? $this->aliasExists($alias) : $this->__default;
 
         if ($this->__files[$numberOfAlias] === null) {
