@@ -17,8 +17,8 @@ use Exception;
 final class FILE extends SetFile
 {
     private int $__default;
-    private $__fileCurrent;
-    private $__modeFileCurrent;
+    private $__currentFile;
+    private $__modeCurrentFile;
 
     public function __construct (...$args) {
         parent::__construct ($args);
@@ -48,37 +48,37 @@ final class FILE extends SetFile
         $numberOfAlias = $alias ? $this->aliasExists($alias) : $this->__default;
 
         if ($this->__files[$numberOfAlias] === null) {
-            $this->__fileCurrent = $numberOfAlias;
+            $this->__currentFile = $numberOfAlias;
             $this->open ();
-            $this->__fileCurrent = null;
+            $this->__currentFile = null;
         }
 
         return $this->__files[$numberOfAlias];
     }
 
     final public function open (string $alias = null, string $mode = null) : void {
-        $numberOfAlias = $alias ? $this->aliasExists($alias) : ($this->__fileCurrent ?? $this->__default);
+        $numberOfAlias = $alias ? $this->aliasExists($alias) : ($this->__currentFile ?? $this->__default);
         $_alias = $this->__alias[$numberOfAlias];
 
-        if ( !($this->__files[$numberOfAlias] = fopen($_alias[1], ($mode ?? ($this->$__modeFileCurrent ?? $_alias[2])))) ) {
+        if ( !($this->__files[$numberOfAlias] = fopen($_alias[1], ($mode ?? ($this->$__modeCurrentFile ?? $_alias[2])))) ) {
             throw new Exception ("Error opening file");
         }
     }
 
     final public function openAll (array $modes = []) : void {
         foreach ($this->__alias as $n => $alias) {
-            $this->__fileCurrent = $n;
-            $this->__modeFileCurrent = $modes[$n] ?? null;
+            $this->__currentFile = $n;
+            $this->__modeCurrentFile = $modes[$n] ?? null;
 
             $this->open ();
         }
 
-        $this->__fileCurrent = null;
-        $this->__modeFileCurrent = null;
+        $this->__currentFile = null;
+        $this->__modeCurrentFile = null;
     }
 
     final public function close (string $alias = null) : void {
-        $numberOfAlias = $alias ? $this->aliasExists($alias) : ($this->__fileCurrent ?? $this->__default);
+        $numberOfAlias = $alias ? $this->aliasExists($alias) : ($this->__currentFile ?? $this->__default);
 
         if ($this->__files[$numberOfAlias] === null) {
             return;
@@ -99,20 +99,20 @@ final class FILE extends SetFile
 
     final public function closeAll () : void {
         foreach ($this->__files as $n => $file) {
-            $this->__fileCurrent = $n;
+            $this->__currentFile = $n;
             $this->close ();
         }
 
-        $this->__fileCurrent = null;
+        $this->__currentFile = null;
     }
 
     final public function getLine (string $alias = null) {
         $numberOfAlias = $alias ? $this->aliasExists($alias) : $this->__default;
 
         if ($this->__files[$numberOfAlias] === null) {
-            $this->__fileCurrent = $numberOfAlias;
+            $this->__currentFile = $numberOfAlias;
             $this->open ();
-            $this->__fileCurrent = null;
+            $this->__currentFile = null;
         }
 
         if (feof($this->__files[$numberOfAlias])) {
