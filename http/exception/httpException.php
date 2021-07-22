@@ -16,7 +16,7 @@ final class HTTPException extends Exception
 {
     private const __default = [
         "state" => 418,
-        "message" => "Error genérico"
+        "message" => "Generic error"
     ];
 
     private int $__state;
