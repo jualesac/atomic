@@ -24,7 +24,7 @@ final class SCHEME extends SCHFile
         $this->__isObject = false;
     }
 
-    final public function test (&$values) : bool {
+    final public function test (array|object &$values) : bool {
         $this->__isObject = is_object ($values);
         $result = true;
 
@@ -54,7 +54,7 @@ final class SCHEME extends SCHFile
         return true;
     }
 
-    final public function testLine () {
+    final public function testLine () : array|null {
         $line = $this->getLine ();
         $newLine = [];
 
