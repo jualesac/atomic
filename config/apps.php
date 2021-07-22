@@ -1,5 +1,5 @@
 <?php
-
+/*Configuración de apps a través de paquetes de rutas*/
 namespace atomic;
 
 trait APPS
