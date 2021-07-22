@@ -76,7 +76,7 @@ abstract class SCHFile extends DATATYPES
         }
     }
 
-    final protected function getLine () {
+    final protected function getLine () : array|null {
         if (feof($this->__file)) {
             return null;
         }
