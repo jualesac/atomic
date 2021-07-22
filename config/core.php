@@ -1,5 +1,5 @@
 <?php
-
+/*Configuración general del framework*/
 namespace atomic;
 
 abstract class CONFIG
