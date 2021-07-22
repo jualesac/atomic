@@ -1,12 +1,5 @@
 <?php
-/*
- * FECHA: 2018/12/26
- * AUTOR: Julio Alejandro Santos Corona
- * CORREO: jasantos@santander.com.mx | jualesac@yahoo.com
- * TÍTULO: config.php
- *
- * Descripción: Configuración de la base de datos.
-*/
+/*Configuración de la conexión a la base de datos*/
 
 namespace atomic\db;
 
