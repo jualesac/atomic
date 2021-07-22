@@ -16,5 +16,5 @@ abstract class CONFIG
     protected string $db = "db";
     protected string $user = "user";
     protected string $pass = "pass";
-    protected int $port = 3306;
+    protected int $port = 3309;
 }
