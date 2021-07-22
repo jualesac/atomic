@@ -10,22 +10,24 @@
 
 namespace scheme;
 
-require ("schData.php");
+require ("dataTypes.php");
 
 use SplFixedArray;
 use Exception;
 
-abstract class SCHFile extends SCHData
+abstract class SCHFile extends DATATYPES
 {
     private $__file;
 
+    protected array $__schema;
     protected int $__countColumns;
     protected array $__parameters;
     protected SplFixedArray $__fileIndex;
 
     protected function __construct (array $schema) {
-        parent::__construct ($schema);
+        parent::__construct ();
 
+        $this->__schema = $schema;
         $this->__countColumns = 0;
         $this->__fileIndex = new SplFixedArray (0);
     }
@@ -74,7 +76,7 @@ abstract class SCHFile extends SCHData
         }
     }
 
-    final protected function getLine () : array|null {
+    final protected function getLine () {
         if (feof($this->__file)) {
             return null;
         }
