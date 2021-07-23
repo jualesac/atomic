@@ -110,52 +110,44 @@ final class HTTP
         $this->methods ("DELETE", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    private function methodConstruct ($url, $schema, callable $middle = null, callable $callback = null) : array {
-        if (is_callable($schema)) {
-            $callback = $middle;
-            $middle = $schema;
-            $schema = [];
+    private function methodConstruct (string $url, ...$args) : array {
+        if (is_array($args[0])) {
+            return [
+                $url,
+                $args[0],
+                $args[1] ?? function () {},
+                $args[2] ?? function () {}
+            ];
         }
 
-        if ($callback === null) {
-            $callback = $middle;
-            $middle = function () {};
+        if (is_callable($args[0])) {
+            return [
+                $url,
+                [],
+                $args[0] ?? function () {},
+                $args[1] ?? function () {}
+            ];
         }
-
-        return [
-            $url,
-            $schema,
-            $middle,
-            $callback
-        ];
     }
 
-    private function methods (string $method, string $url, array $schema = [], callable $middle, callable $callback, bool $strict = true) : void {
+    private function methods (string $method, string $url, array $schema, callable $middle, callable $callback, bool $strict = true) : void {
         if (!$this->checkRequest($url, $strict) || $this->__method !== $method) {
             return;
         }
-
-        try {
-            $this->__res->utf8 = $this->utf8;
-            $this->__res->redirect->url = $this->__url;
-            $this->__res->redirect->header = $this->header;
-            $this->__res->httpRequest->url = $this->__url;
-            $this->__res->httpRequest->header = $this->header;
-            $this->__req->setParams ($url);
+        
+        $this->__res->utf8 = $this->utf8;
+        $this->__res->redirect->url = $this->__url;
+        $this->__res->redirect->header = $this->header;
+        $this->__res->httpRequest->url = $this->__url;
+        $this->__res->httpRequest->header = $this->header;
+        $this->__req->setParams ($url);
             
-            if (!$this->__scheme->test ($schema)) {
-                return;
-            }
-
-            $middle ($this->__res, $this->__req);
-            $callback ($this->__res, $this->__req);
-            
-        } catch (HTTPException $e) {
-            RESOLVE::jsonResponse ($e->getException ()[0], $e->getException()[2] ?? [ "message" => $e->getException()[1] ], $this->utf8);
-        } catch (Exception $e) {
-            $except = HTTPException::parse ($e->getMessage());
-            RESOLVE::jsonResponse ($except[0], [ "message" => $except[1] ], $this->utf8);
+        if (!$this->__scheme->test ($schema)) {
+            return;
         }
+
+        $middle ($this->__res, $this->__req);
+        $callback ($this->__res, $this->__req);
     }
 
     final public function checkRequest (string &$url, bool $strict = null) : bool {
