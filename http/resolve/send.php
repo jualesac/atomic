@@ -21,7 +21,7 @@ abstract class SEND
         $this->__headers = new SplFixedArray (0);
     }
 
-    final public function setHeader ($headers) : void {
+    final public function setHeader (array|string $headers) : void {
         if (is_string($headers)) {
             $headers = [$headers];
         }
