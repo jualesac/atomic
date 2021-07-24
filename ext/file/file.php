@@ -60,7 +60,7 @@ final class FILE extends SetFile
         $numberOfAlias = $alias ? $this->aliasExists($alias) : ($this->__currentFile ?? $this->__default);
         $_alias = $this->__alias[$numberOfAlias];
 
-        if ( !($this->__files[$numberOfAlias] = fopen($_alias[1], ($mode ?? ($this->$__currentFileMode ?? $_alias[2])))) ) {
+        if ( !($this->__files[$numberOfAlias] = fopen($_alias[1], ($mode ?? ($this->__currentFileMode ?? $_alias[2])))) ) {
             throw new Exception ("Error opening file");
         }
     }
