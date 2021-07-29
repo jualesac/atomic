@@ -19,7 +19,6 @@ require ("route/httpRoute.php");
 use http\resolve\RESOLVE;
 use http\request\REQUEST;
 use http\scheme\SCHEME;
-use Exception;
 
 final class HTTP
 {
