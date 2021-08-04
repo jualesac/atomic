@@ -18,8 +18,8 @@ require ("response.php");
 final class RESOLVE extends SEND
 {
     public bool $utf8 = false;
-    public object $httpRequest;
-    public object $redirect;
+    public STREAM $httpRequest;
+    public REDIRECT $redirect;
 
     public function __construct () {
         parent::__construct ();
