@@ -10,7 +10,6 @@
 
 namespace http\resolve;
 
-use HTTPException;
 use SplFixedArray;
 
 abstract class SEND
