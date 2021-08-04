@@ -53,7 +53,7 @@ final class RESOLVE extends SEND
         exit (json_encode($content));
     }
 
-    private static function utf8EncodeArray ($content) : array {
+    private static function utf8EncodeArray (array|object $content) : array {
         return array_map (function ($c) {
             if (is_array($c) || is_object($c)) {
                 return self::utf8EncodeArray ($c);
