@@ -62,7 +62,7 @@ final class SCHEME
         }
     }
 
-    private function checkType (string $type, string $value, $validate = true) : bool {
+    private function checkType (string $type, string $value, bool $validate = true) : bool {
         $flag = false;
 
         switch ($type) {
