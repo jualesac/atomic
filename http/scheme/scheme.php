@@ -16,7 +16,7 @@ use Exception;
 
 final class SCHEME
 {
-    private object $__req;
+    private REQUEST $__req;
 
     public function __construct (REQUEST $req) {
         $this->__req = $req;
