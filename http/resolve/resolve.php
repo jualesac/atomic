@@ -17,6 +17,8 @@ require ("response.php");
 
 final class RESOLVE extends SEND
 {
+    use RESCONSTRUCT;
+    
     public bool $utf8 = false;
     public STREAM $httpRequest;
     public REDIRECT $redirect;
@@ -37,11 +39,9 @@ final class RESOLVE extends SEND
     }
 
     final public function response (...$args) : void {
-        $res = new RESPONSE ($args);
-
+        $this->responseConstruct ($args);
         $this->loadHeaders ();
-
-        $this->jsonResponse ($res->__state, $res->__content, ( !$res->__utf8isNull ? $res->__utf8 : $this->utf8 ));
+        $this->jsonResponse ($this->__res[0], $this->__res[1], ($this->__res[2] ?? $this->utf8));
     }
 
     final public static function jsonResponse (int $state, array $content, bool $utf8 = false) : void {
