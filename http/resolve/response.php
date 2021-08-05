@@ -14,7 +14,7 @@ trait RESCONSTRUCT
 {
     private array $__res;
 
-    private function responseConstruct ($args) : void {
+    private function responseConstruct (array $args) : void {
         if (is_array($args[1] ?? null)) {
             $this->__resConstruct0 ($args[0], $args[1], ($args[2] ?? null));
         } elseif (is_array($args[0])) {
