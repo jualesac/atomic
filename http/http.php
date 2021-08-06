@@ -27,7 +27,6 @@ final class HTTP
     private object $__req;
     private object $__res;
     private object $__scheme;
-
     private string $__method;
 
     public bool $utf8;
