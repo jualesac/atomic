@@ -35,7 +35,6 @@ abstract class SCHFile extends DATATYPES
     final public function loadFile ($file, array $parameters = []) : void {
         $this->constructor ($parameters);
         $this->__file = $file;
-        $this->strict = true;
 
         for ($n = 1; $n < $this->__parameters["line"]; $n++) {
             fgets ($this->__file);
@@ -46,7 +45,7 @@ abstract class SCHFile extends DATATYPES
         }
     }
 
-    private function constructor ($params) : void {
+    private function constructor (array $params) : void {
         (int) $this->__parameters["mode"] = (($params["mode"] ?? "delimited") == "delimited") ? 1 : 0;
         (int) $this->__parameters["line"] = $params["line"] ?? 1;
         (bool) $this->__parameters["colname"] = $params["colname"] ?? false;

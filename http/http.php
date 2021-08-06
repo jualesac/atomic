@@ -85,25 +85,25 @@ final class HTTP
         }
     }
 
-    final public function get (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+    final public function get (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {
         $arg = $this->methodConstruct($url, $schema, $middle, $callback);
 
         $this->methods ("GET", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    final public function post (string $url, $schema, callable $middle = null, callable $callback = null) : void {        
+    final public function post (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {        
         $arg = $this->methodConstruct($url, $schema, $middle, $callback);
 
         $this->methods ("POST", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    final public function put (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+    final public function put (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {
         $arg = $this->methodConstruct($url, $schema, $middle, $callback);
 
         $this->methods ("PUT", $arg[0], $arg[1], $arg[2], $arg[3]);
     }
 
-    final public function delete (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+    final public function delete (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {
         $arg = $this->methodConstruct($url, $schema, $middle, $callback);
 
         $this->methods ("DELETE", $arg[0], $arg[1], $arg[2], $arg[3]);

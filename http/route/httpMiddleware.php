@@ -22,9 +22,7 @@ abstract class HTTPMiddleware
         $this->__middle = new SplFixedArray (0);
     }
 
-    final public function setMiddleware ($url, $callback = null, bool $strict = false) : void {
-        if (!(is_string($url) || is_callable($url))) { throw new HTTPException (400, "The structure of the arguments is not correct for the middleware"); }
-
+    final public function setMiddleware (string|callable $url, callable|bool $callback = null, bool $strict = false) : void {
         if (is_callable($url)) {
             $strict = $callback;
             $callback = $url;

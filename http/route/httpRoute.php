@@ -27,25 +27,25 @@ final class HTTPRoute extends HTTPMiddleware
         $this->__method = $_SERVER["REQUEST_METHOD"];
     }
 
-    final public function get (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+    final public function get (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {
         if ($this->__method !== "GET") { return; }
 
         $this->route ($url, $schema, $middle, $callback);
     }
 
-    final public function post (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+    final public function post (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {
         if ($this->__method !== "POST") { return; }
 
         $this->route ($url, $schema, $middle, $callback);
     }
 
-    final public function put (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+    final public function put (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {
         if ($this->__method !== "PUT") { return; }
 
         $this->route ($url, $schema, $middle, $callback);
     }
 
-    final public function delete (string $url, $schema, callable $middle = null, callable $callback = null) : void {
+    final public function delete (string $url, array|callable $schema, callable $middle = null, callable $callback = null) : void {
         if ($this->__method !== "DELETE") { return; }
 
         $this->route ($url, $schema, $middle, $callback);
@@ -55,7 +55,7 @@ final class HTTPRoute extends HTTPMiddleware
         return $this->__routes;
     }
 
-    private function route (string $route, $schema, ...$functions) : void {
+    private function route (string $route, array|callable $schema, ...$functions) : void {
         $this->__routes[$this->addArray($this->__routes)] = [
             trim($route),
             $schema,
