@@ -69,11 +69,7 @@ final class STREAM
         ];
 
         $context = stream_context_create ($wrapper);
-
-        if (@!$this->content = file_get_contents($uri, false, $context)) {
-            $this->state = 404;
-            return;
-        }
+        @$this->content = file_get_contents($uri, false, $context);
 
         $h = $http_response_header ?? [];
 
