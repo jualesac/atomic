@@ -25,32 +25,24 @@ final class REDIRECT
     final public function get (string $url) : void {
         $this->__red (function () use ($url) {
             $this->httpRequest->get ($url);
-        
-            $this->response ($this->httpRequest->state, $this->httpRequest->content);
         });
     }
 
     final public function post (string $url, $body = []) : void {
         $this->__red (function () use ($url, $body) {
             $this->httpRequest->post ($url, $body);
-        
-            $this->response ($this->httpRequest->state, $this->httpRequest->content);
         });
     }
 
     final public function put (string $url, $body = []) : void {
         $this->__red (function () use ($url, $body) {
             $this->httpRequest->put ($url, $body);
-        
-            $this->response ($this->httpRequest->state, $this->httpRequest->content);
         });
     }
 
     final public function delete (string $url, $body = []) : void {
         $this->__red (function () use ($url, $body) {
             $this->httpRequest->delete ($url, $body);
-        
-            $this->response ($this->httpRequest->state, $this->httpRequest->content);
         });
     }
 
@@ -62,6 +54,8 @@ final class REDIRECT
         $this->httpRequest->header = $this->header;
 
         $callback ();
+
+        $this->response ($this->httpRequest->state, $this->httpRequest->content);
     }
 
     private function response (int $state, string $content) : void {
