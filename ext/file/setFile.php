@@ -58,7 +58,6 @@ abstract class SetFile
     private function construct0 (string $alias, string $path = null) : void {
         if (self::aliasExists($alias) > -1) { throw new Exception ("Duplicate aliases"); }
 
-        $p = $path;
         $mode = "w";
 
         if ($path) {
