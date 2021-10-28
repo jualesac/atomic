@@ -106,7 +106,7 @@ final class FILE extends SetFile
         $this->__currentFile = null;
     }
 
-    final public function getLine (string $alias = null) {
+    final public function getLine (string $alias = null) : string|null {
         $numberOfAlias = $alias ? $this->aliasExists($alias) : $this->__default;
 
         if ($this->__files[$numberOfAlias] === null) {
