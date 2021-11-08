@@ -64,7 +64,7 @@ abstract class DATATYPES
     }
 
     private function number (string &$value) : bool {
-        $value = preg_replace ([ "`[^0-9\-.]`", "`^-0+`", "`^0+`", "`^-\.`", "`^\.`", "`0+$`", "`\.$`", "`^$`" ], [ "", "-", "", "-0.", "0.", "", ".00", "0"  ], $value);
+        $value = preg_replace ([ "`[^0-9\-.]`", "`^-0+`", "`^0+`", "`^-\.`", "`^\.`", "`\.$`", "`^$`" ], [ "", "-", "", "-0.", "0.", ".00", "0"  ], $value);
 
         return preg_match ("`^-?\d+(\.\d+)?$`", $value);
     }
