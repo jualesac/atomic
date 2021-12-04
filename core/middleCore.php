@@ -10,7 +10,6 @@
 
 namespace atomic;
 
-use SplFixedArray;
 use http\HTTPRoute;
 
 abstract class MIDDLECORE extends DBCORE
