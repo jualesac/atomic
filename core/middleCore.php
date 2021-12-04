@@ -11,29 +11,25 @@
 namespace atomic;
 
 use SplFixedArray;
+use http\HTTPRoute;
 
 abstract class MIDDLECORE extends DBCORE
 {
-    private SplFixedArray $__middle;
+    private HTTPRoute $__route;
 
     protected function __construct () {
         parent::__construct ();
-
-        $this->__middle = new SplFixedArray (0);
-
-        $this->setMiddlewares ();
     }
 
     abstract protected function setMiddlewares () : void;
 
     final protected function set (callable $middleware, bool $strict = false) {
-        $k = $this->__middle->count ();
-
-        $this->__middle->setSize ($k + 1);
-        $this->__middle[$k] = [ $middleware, $strict ];
+        $this->__route->setMiddleware ($middleware, $strict);
     }
 
-    final public function get () : SplFixedArray {
-        return $this->__middle;
+    final public function setMiddles (HTTPRoute $route) : void {
+        $this->__route = $route;
+
+        $this->setMiddlewares ();
     }
 }
