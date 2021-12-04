@@ -20,8 +20,6 @@ require (__DIR__."/../ext/scheme/scheme.php");
 use http\HTTPRoute;
 use atomic\db\DB;
 
-use SplFixedArray;
-
 abstract class STDCore extends DBCORE
 {
     use FUNCTIONCORE;
