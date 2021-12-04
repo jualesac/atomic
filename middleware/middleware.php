@@ -18,7 +18,7 @@ final class MIDDLEWARE extends MIDDLECORE
         parent::__construct ();
     }
 
-    final public function setMiddlewares () : void {
+    final protected function setMiddlewares () : void {
         $this->set (function ($res, $req) {
             
         });
