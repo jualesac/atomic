@@ -10,7 +10,7 @@
 
 namespace http\resolve;
 
-final class REDIRECT
+final class REDIRECT extends SEND
 {
     private STREAM $httpRequest;
 
@@ -18,6 +18,8 @@ final class REDIRECT
     public array $header;
 
     public function __construct (STREAM $httpRequest) {
+        parent::__construct ();
+
         $this->httpRequest = $httpRequest;
         $this->url = "";
     }
@@ -28,21 +30,21 @@ final class REDIRECT
         });
     }
 
-    final public function post (string $url, $body = []) : void {
-        $this->__red (function () use ($url, $body) {
-            $this->httpRequest->post ($url, $body);
+    final public function post (string $url) : void {
+        $this->__red (function () use ($url) {
+            $this->httpRequest->post ($url);
         });
     }
 
-    final public function put (string $url, $body = []) : void {
-        $this->__red (function () use ($url, $body) {
-            $this->httpRequest->put ($url, $body);
+    final public function put (string $url) : void {
+        $this->__red (function () use ($url) {
+            $this->httpRequest->put ($url);
         });
     }
 
-    final public function delete (string $url, $body = []) : void {
-        $this->__red (function () use ($url, $body) {
-            $this->httpRequest->delete ($url, $body);
+    final public function delete (string $url) : void {
+        $this->__red (function () use ($url) {
+            $this->httpRequest->delete ($url);
         });
     }
 
@@ -55,13 +57,7 @@ final class REDIRECT
 
         $callback ();
 
-        $this->response ($this->httpRequest->state, $this->httpRequest->content);
-    }
-
-    private function response (int $state, string $content) : void {
-        header ("HTTP/1.1 {$state}");
-        header ("Content-Type: application/json; charset=UTF-8;");
-
-        exit ($content);
+        parent::setHeader ("Content-Type: application/json; charset=UTF-8;");
+        parent::send ($this->httpRequest->state, $this->httpRequest->content);
     }
 }
