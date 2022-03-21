@@ -14,40 +14,46 @@ use SplFixedArray;
 
 abstract class SEND
 {
-    private SplFixedArray $__headers;
+    private static SplFixedArray $__headers;
 
     protected function __construct () {
-        $this->__headers = new SplFixedArray (0);
+        self::$__headers = new SplFixedArray (0);
     }
 
-    final public function setHeader (array|string $headers) : void {
+    final public static function setHeader (array|string $headers) : void {
+        if (!isset(self::$__headers)) {
+            self::$__headers = new SplFixedArray (0);
+        }
+
         if (is_string($headers)) {
             $headers = [$headers];
         }
 
         foreach ($headers as $h) {
-            if ($h == "" || preg_match("`HTTP/`i", $h)) {
+            if ($h == "" || preg_match("`^HTTP/`i", trim($h))) {
                 continue;
             }
 
-            $k = $this->__headers->count ();
-            $this->__headers->setSize ($k + 1);
-            $this->__headers[$k] = $h;
+            $k = self::$__headers->count ();
+            self::$__headers->setSize ($k + 1);
+            self::$__headers[$k] = trim ($h);
         }
     }
 
-    final public function send (int $state, string $content) : void {
+    final public static function send (int $state, string $content) : void {
         header ("HTTP/1.1 {$state}");
-        
-        $this->loadHeaders ();
 
-        echo ($content);
-        
-        exit;
+        self::loadHeaders ();
+
+        exit ($content);
     }
 
-    final protected function loadHeaders () : void {
-        foreach ($this->__headers as $h) {
+    private static function loadHeaders () : void {
+        if (!isset(self::$__headers)) {
+            self::$__headers = new SplFixedArray (0);
+        }
+
+        foreach (self::$__headers as $h) {
             header ($h);
         }
     }
