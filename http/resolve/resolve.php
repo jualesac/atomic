@@ -18,7 +18,7 @@ require ("response.php");
 final class RESOLVE extends SEND
 {
     use RESCONSTRUCT;
-    
+
     public bool $utf8 = false;
     public STREAM $httpRequest;
     public REDIRECT $redirect;
@@ -40,17 +40,14 @@ final class RESOLVE extends SEND
 
     final public function response (...$args) : void {
         $this->responseConstruct ($args);
-        $this->loadHeaders ();
         $this->jsonResponse ($this->__res[0], $this->__res[1], ($this->__res[2] ?? $this->utf8));
     }
 
     final public static function jsonResponse (int $state, array $content, bool $utf8 = false) : void {
         $content = $utf8 ? self::utf8EncodeArray($content) : $content;
 
-        header ("HTTP/1.1 {$state}");
-        header ("Content-Type: application/json; charset=UTF-8;");
-
-        exit (json_encode($content));
+        parent::setHeader ("Content-Type: application/json; charset=UTF-8;");
+        parent::send ($state, json_encode($content));
     }
 
     private static function utf8EncodeArray (array|object $content) : array {
