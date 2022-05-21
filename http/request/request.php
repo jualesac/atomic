@@ -17,9 +17,9 @@ final class REQUEST extends FILE
     private const _GET = "`((\?|&)[a-z0-9%+_\-.]+=[a-z0-9%+_\-.]+)|(\?|&)`i";
     private const _VAL = "`([a-z0-9%+_\-.]+)=([a-z0-9%+_\-.]+)`i";
     private const _PARAMS = "`/:([a-z0-9_]+)`i";
-    
-    public array $header;
+
     public string $method;
+    public array $header;
     public object $get;
     public object $param;
     public object $body;
@@ -28,8 +28,8 @@ final class REQUEST extends FILE
     final public function __construct () {
         parent::__construct ();
 
-        $this->header = apache_request_headers ();
         $this->method = $_SERVER["REQUEST_METHOD"];
+        $this->header = apache_request_headers ();
         $this->get = $this->getURLValues ();
         $this->body = $this->getBody ();
     }
