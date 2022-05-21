@@ -19,6 +19,7 @@ final class REQUEST extends FILE
     private const _PARAMS = "`/:([a-z0-9_]+)`i";
     
     public array $header;
+    public string $method;
     public object $get;
     public object $param;
     public object $body;
@@ -28,6 +29,7 @@ final class REQUEST extends FILE
         parent::__construct ();
 
         $this->header = apache_request_headers ();
+        $this->method = $_SERVER["REQUEST_METHOD"];
         $this->get = $this->getURLValues ();
         $this->body = $this->getBody ();
     }
