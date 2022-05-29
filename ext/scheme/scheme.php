@@ -24,7 +24,7 @@ final class SCHEME extends SCHFile
         $this->__isObject = false;
     }
 
-    final public function test (array|object &$values) : bool {
+    final public function test (&$values) : bool {
         $this->__isObject = is_object ($values);
         $result = true;
 
@@ -54,7 +54,7 @@ final class SCHEME extends SCHFile
         return true;
     }
 
-    final public function testLine () : array|null {
+    final public function testLine () {
         $line = $this->getLine ();
         $newLine = [];
 
@@ -62,22 +62,26 @@ final class SCHEME extends SCHFile
             return null;
         }
 
-        if ($this->__parameters["mode"] && $this->__parameters["colname"] && count($line) < $this->__countColumns) {
+        if (($this->__parameters["mode"] && $this->__parameters["colname"] && count($line) < $this->__countColumns) || count($line) < count($this->__schema)) {
             return $newLine;
         }
 
         $c = 0;
 
-        foreach ($this->__schema as $properties) {
+        foreach ($this->__schema as $k => $properties) {
             $prop = $this->propertiesConstructor (is_array($properties) ? $properties : [ $properties ]);
 
             if ($this->__parameters["mode"]) {
-                if ($this->__parameters["colname"] && ($this->__fileIndex[$c] === false)) {
-                    $c++;
-                    continue;
-                }
+                if ($this->__parameters["colname"]) {
+                    if ($this->__fileIndex[$c] === false) {
+                        $c++;
+                        continue;
+                    }
 
-                $value = $this->__parameters["colname"] ? $line[$this->__fileIndex[$c]] : $line[$c];
+                    $value = $line[$this->__fileIndex[$c]];
+                } else {
+                    $value = $line[$k];
+                }
             } else {
                 $value = $line[$c];
             }
