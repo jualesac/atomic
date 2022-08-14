@@ -54,7 +54,7 @@ final class SCHEME extends SCHFile
         return true;
     }
 
-    final public function testLine () {
+    final public function testLine () : array|null {
         $line = $this->getLine ();
         $newLine = [];
 
