@@ -13,9 +13,12 @@ namespace http\resolve;
 trait RESCONSTRUCT
 {
     private array $__res;
+    private array $__partialResponse = [];
 
     private function responseConstruct (array $args) : void {
-        if (is_array($args[1] ?? null)) {
+        if (count($args) == 1 && is_int($args[0])) {
+            $this->__resConstruct0 ($args[0], $this->__partialResponse, null);
+        } if (is_array($args[1] ?? null)) {
             $this->__resConstruct0 ($args[0], $args[1], ($args[2] ?? null));
         } elseif (is_array($args[0])) {
             $this->__resConstruct1 ($args[0], ($args[1] ?? null));
@@ -49,5 +52,9 @@ trait RESCONSTRUCT
         if (is_object($c)) { return (array) $c; }
 
         return [ "message" => $c ];
+    }
+
+    final public function setPartial (string|array $message) : void {
+        $this->__partialResponse[] = $this->__arrayEncode ($message);
     }
 }
