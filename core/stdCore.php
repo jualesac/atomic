@@ -14,8 +14,10 @@ require ("dbCore.php");
 require ("functionCore.php");
 require ("middleCore.php");
 require (__DIR__."/../middleware/middleware.php");
-require (__DIR__."/../ext/file/file.php");
 require (__DIR__."/../ext/scheme/scheme.php");
+require (__DIR__."/../ext/file/file.php");
+require (__DIR__."/../ext/sftp/sftp.php");
+require (__DIR__."/../ext/zip/zip.php");
 
 use http\HTTPRoute;
 use atomic\db\DB;
