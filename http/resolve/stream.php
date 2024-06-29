@@ -14,7 +14,7 @@ use Exception;
 
 final class STREAM
 {
-    public string $hots;
+    public string $host;
     public string $script;
     public string $url;
     public bool $secureProtocol;
